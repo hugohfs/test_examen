@@ -3,25 +3,27 @@ import 'package:firebase_database/firebase_database.dart';
 class Pregunta {
   String key;
   String texto;
-  String respuesta01;
-  String respuesta02;
-  String respuesta03;
+  List<String> respuestas;
+  int respuestaCorrecta;
 
-  Pregunta(this.texto, this.respuesta01, this.respuesta02, this.respuesta03);
+  Pregunta(this.texto, this.respuestas, this.respuestaCorrecta);
 
   Pregunta.fromSnapshot(DataSnapshot snapshot)
       : key = snapshot.key,
-        texto = snapshot.value["texto"],
-        respuesta01 = snapshot.value["respuesta01"],
-        respuesta02 = snapshot.value["respuesta02"],
-        respuesta03 = snapshot.value["respuesta03"];
+        texto =
+            snapshot.value["texto"] != null ? snapshot.value["texto"] : null,
+        respuestas = snapshot.value["respuestas"] != null
+            ? snapshot.value["respuestas"].cast<String>()
+            : null,
+        respuestaCorrecta = snapshot.value["respuestaCorrecta"] != null
+            ? snapshot.value["respuestaCorrecta"]
+            : null;
 
   toJson() {
     return {
       "texto": texto,
-      "respuesta01": respuesta01,
-      "respuesta02": respuesta02,
-      "respuesta03": respuesta03
+      "respuestas": respuestas,
+      "respuestaCorrecta": respuestaCorrecta
     };
   }
 }

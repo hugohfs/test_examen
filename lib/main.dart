@@ -11,14 +11,8 @@ import 'package:firebase_database/ui/firebase_animated_list.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/services.dart';
 import 'package:test_examen/model/pregunta.dart';
-
-/*final FirebaseApp app = FirebaseApp(
-    options: FirebaseOptions(
-      googleAppID: '',
-      apiKey: '',
-      databaseURL: '',
-      )
-);*/
+import 'package:test_examen/pregunta_page.dart';
+import 'package:test_examen/globals.dart' as globals;
 
 void main() => runApp(MyApp());
 
@@ -46,7 +40,7 @@ class MyStatefulWidget extends StatefulWidget {
 
 class _MyStatefulWidgetState extends State<MyStatefulWidget> {
   List<Pregunta> preguntas = List();
-  Pregunta pregunta;
+  Pregunta _pregunta = Pregunta('',['','',''],-1);
   DatabaseReference preguntaRef;
 
   final FirebaseDatabase database = FirebaseDatabase.instance;
@@ -55,10 +49,12 @@ class _MyStatefulWidgetState extends State<MyStatefulWidget> {
   String userAccountName = "test.email@gmail.com";
   String userAccountEmail = "test.email@gmail.com";
 
+  int _radioValue = 0;
+
   @override
   void initState() {
     super.initState();
-    pregunta = Pregunta("", "", "", "");
+    _pregunta = Pregunta('',List<String>(),-1);
     preguntaRef = database.reference().child("preguntas");
 
     preguntaRef.onChildAdded.listen(_onEntryAdded);
@@ -81,19 +77,30 @@ class _MyStatefulWidgetState extends State<MyStatefulWidget> {
     });
   }
 
-  void handleSubmit() {
+  void _handleSubmit() {
     final FormState form = formKey.currentState;
 
     if (form.validate()) {
-      form.save();
-      form.reset();
-      preguntaRef.push().set(pregunta.toJson());
+      if (_radioValue < 0) {
+        //TODO:
+        print('Debe seleccionar una opcion');
+      } else {
+        form.save();
+        form.reset();
+        preguntaRef.push().set(_pregunta.toJson());
+
+        setState(() {
+          _pregunta = Pregunta('', List<String>(), -1);
+          _radioValue = -1;
+        });
+      }
     }
   }
 
-  eliminarPregunta(String preguntaId, int index) {
-    preguntaRef.child(preguntaId).remove().then((_) {
-      print("Delete $preguntaId successful");
+  eliminarPregunta(int index) {
+    String key = preguntas[index].key;
+    preguntaRef.child(key).remove().then((_) {
+      print("Delete $key successful");
       setState(() {
         preguntas.removeAt(index);
       });
@@ -146,7 +153,7 @@ class _MyStatefulWidgetState extends State<MyStatefulWidget> {
                         leading: Icon(Icons.title),
                         title: TextFormField(
                           initialValue: "",
-                          onSaved: (val) => pregunta.texto = val,
+                          onSaved: (val) => _pregunta.texto = val,
                           validator: (val) => val == "" ? val : null,
                         ),
                       ),
@@ -154,7 +161,7 @@ class _MyStatefulWidgetState extends State<MyStatefulWidget> {
                         leading: Icon(Icons.description),
                         title: TextFormField(
                           initialValue: "",
-                          onSaved: (val) => pregunta.respuesta01 = val,
+                          onSaved: (val) => _pregunta.respuestas.add(val),
                           validator: (val) => val == "" ? val : null,
                         ),
                       ),
@@ -162,7 +169,7 @@ class _MyStatefulWidgetState extends State<MyStatefulWidget> {
                         leading: Icon(Icons.description),
                         title: TextFormField(
                           initialValue: "",
-                          onSaved: (val) => pregunta.respuesta02 = val,
+                          onSaved: (val) => _pregunta.respuestas.add(val),
                           validator: (val) => val == "" ? val : null,
                         ),
                       ),
@@ -170,10 +177,48 @@ class _MyStatefulWidgetState extends State<MyStatefulWidget> {
                         leading: Icon(Icons.description),
                         title: TextFormField(
                           initialValue: "",
-                          onSaved: (val) => pregunta.respuesta03 = val,
+                          onSaved: (val) => _pregunta.respuestas.add(val),
                           validator: (val) => val == "" ? val : null,
                         ),
                       ),
+                      ListTile(
+                      leading: Icon(Icons.check),
+                      title: Row(
+                        children: <Widget>[
+                          Text('Op1'),
+                          Radio(
+                            value: 1,
+                            groupValue: _radioValue,
+                            onChanged: (val) {
+                              _handleRadioValueChange(val);
+                            },
+                          ),
+                          Text('Op2'),
+                          Radio(
+                            value: 2,
+                            groupValue: _radioValue,
+                            onChanged: (val) {
+                              _handleRadioValueChange(val);
+                            },
+                          ),
+                          Text('Op3'),
+                          Radio(
+                            value: 3,
+                            groupValue: _radioValue,
+                            onChanged: (val) {
+                              _handleRadioValueChange(val);
+                            },
+                          )
+                        ],
+                      )),
+                      /*ListTile(
+                        leading: Icon(Icons.check),
+                        title: TextFormField(
+                          initialValue: "",
+                          onSaved: (val) => _pregunta.respuestaCorrecta = int.parse(val),
+                          validator: (val) => val == "" ? val : null,
+                        ),
+                      ),*/
                       RaisedButton(
                         //padding: new EdgeInsets.all(0.0),
                         elevation: 5.0,
@@ -184,7 +229,7 @@ class _MyStatefulWidgetState extends State<MyStatefulWidget> {
                             style: new TextStyle(
                                 fontSize: 20.0, color: Colors.white)),
                         onPressed: () {
-                          handleSubmit();
+                          _handleSubmit();
                         },
                       )
                     ],
@@ -194,32 +239,31 @@ class _MyStatefulWidgetState extends State<MyStatefulWidget> {
             ),
             Flexible(
                 child: ListView.builder(
-                          shrinkWrap: true,
-                          itemCount: preguntas.length,
-                          itemBuilder: (BuildContext context, int index) {
-                            String preguntaId = preguntas[index].key;
-                            String texto = preguntas[index].texto;
-                            String respuesta01 = preguntas[index].respuesta01;
-                            String respuesta02 = preguntas[index].respuesta02;
-                            String respuesta03 = preguntas[index].respuesta03;
-                            return ListTile(
-                              title: Text(
-                                texto,
-                                style: TextStyle(fontSize: 20.0),
-                              ),
-                              subtitle: Text(respuesta01 +
-                                  " - " +
-                                  respuesta02 +
-                                  " - " +
-                                  respuesta03),
-                              trailing: IconButton(
-                                  icon: Icon(Icons.delete,
-                                      color: Colors.grey, size: 20.0),
-                                  onPressed: () {
-                                    eliminarPregunta(preguntaId, index);
-                                  }),
-                            );
-                          })
+                    shrinkWrap: true,
+                    itemCount: preguntas.length,
+                    itemBuilder: (BuildContext context, int index) {
+                      return ListTile(
+                        title: Text(
+                          preguntas[index].texto,
+                          style: TextStyle(fontSize: 20.0),
+                        ),
+                        subtitle: preguntas[index].respuestas != null ? Text(preguntas[index].respuestas[0] +
+                            ", " +
+                            preguntas[index].respuestas[1] +
+                            ", " +
+                            preguntas[index].respuestas[2]) : Text(''),
+                        onTap: () => Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => PreguntaPage(pregunta: preguntas[index]))),
+                        trailing: IconButton(
+                            icon: Icon(Icons.delete,
+                                color: Colors.grey, size: 20.0),
+                            onPressed: () {
+                              eliminarPregunta(index);
+                            }),
+                      );
+                    })
                 /*return new ListTile(
                       leading: Icon(Icons.info),
                       title: Text(preguntas[index].texto),
@@ -236,6 +280,13 @@ class _MyStatefulWidgetState extends State<MyStatefulWidget> {
                 )
           ],
         ));
+  }
+
+  void _handleRadioValueChange(int value) {
+    setState(() {
+      _radioValue = value;
+      _pregunta.respuestaCorrecta = _radioValue;
+    });
   }
 
   _showDialogDelete(BuildContext context, String preguntaId, int index) async {
@@ -259,7 +310,7 @@ class _MyStatefulWidgetState extends State<MyStatefulWidget> {
               new FlatButton(
                   child: const Text('Si'),
                   onPressed: () async {
-                    eliminarPregunta(preguntaId, index);
+                    eliminarPregunta(index);
                     Navigator.pop(context);
                   })
             ],

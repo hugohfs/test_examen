@@ -7,11 +7,9 @@
 
 import 'package:flutter/material.dart';
 import 'package:firebase_database/firebase_database.dart';
-import 'package:firebase_database/ui/firebase_animated_list.dart';
-import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/services.dart';
 import 'package:test_examen/model/pregunta.dart';
-import 'package:test_examen/pregunta_page.dart';
+import 'package:test_examen/pages/lista_preguntas_page.dart';
 import 'package:test_examen/globals.dart' as globals;
 
 void main() => runApp(MyApp());
@@ -39,12 +37,15 @@ class MyStatefulWidget extends StatefulWidget {
 }
 
 class _MyStatefulWidgetState extends State<MyStatefulWidget> {
-  List<Pregunta> preguntas = List();
-  Pregunta _pregunta = Pregunta('',['','',''],-1);
-  DatabaseReference preguntaRef;
+  List<Pregunta> _preguntas = List();
+  Pregunta _pregunta = Pregunta('', ['', '', ''], -1);
+  Pregunta _preguntaAnadida = Pregunta('', ['', '', ''], -1);
+  DatabaseReference _preguntaRef;
 
   final FirebaseDatabase database = FirebaseDatabase.instance;
   final GlobalKey<FormState> formKey = GlobalKey<FormState>();
+
+  final keyScaffoldState = new GlobalKey<ScaffoldState>();
 
   String userAccountName = "test.email@gmail.com";
   String userAccountEmail = "test.email@gmail.com";
@@ -54,26 +55,27 @@ class _MyStatefulWidgetState extends State<MyStatefulWidget> {
   @override
   void initState() {
     super.initState();
-    _pregunta = Pregunta('',List<String>(),-1);
-    preguntaRef = database.reference().child("preguntas");
+    _pregunta = Pregunta('', List<String>(), -1);
+    _preguntaRef = database.reference().child("preguntas");
 
-    preguntaRef.onChildAdded.listen(_onEntryAdded);
-    preguntaRef.onChildChanged.listen(_onEntryChanged);
+    _preguntaRef.onChildAdded.listen(_onEntryAdded);
+    _preguntaRef.onChildChanged.listen(_onEntryChanged);
   }
 
   _onEntryAdded(Event event) {
     setState(() {
-      preguntas.add(Pregunta.fromSnapshot(event.snapshot));
+      _preguntas.add(Pregunta.fromSnapshot(event.snapshot));
     });
   }
 
   _onEntryChanged(Event event) {
-    var old = preguntas.singleWhere((entry) {
+    var old = _preguntas.singleWhere((entry) {
       return entry.key == event.snapshot.key;
     });
 
     setState(() {
-      preguntas[preguntas.indexOf(old)] = Pregunta.fromSnapshot(event.snapshot);
+      _preguntas[_preguntas.indexOf(old)] =
+          Pregunta.fromSnapshot(event.snapshot);
     });
   }
 
@@ -87,28 +89,26 @@ class _MyStatefulWidgetState extends State<MyStatefulWidget> {
       } else {
         form.save();
         form.reset();
-        preguntaRef.push().set(_pregunta.toJson());
+        form.reset();
+        _preguntaRef.push().set(_pregunta.toJson());
 
         setState(() {
+          _preguntaAnadida = _pregunta;
           _pregunta = Pregunta('', List<String>(), -1);
           _radioValue = -1;
         });
+
+        keyScaffoldState.currentState.showSnackBar(new SnackBar(
+          content: new Text("Pregunta añadida"),
+        ));
+
       }
     }
   }
 
-  eliminarPregunta(int index) {
-    String key = preguntas[index].key;
-    preguntaRef.child(key).remove().then((_) {
-      print("Delete $key successful");
-      setState(() {
-        preguntas.removeAt(index);
-      });
-    });
-  }
-
   Widget build(BuildContext context) {
     return Scaffold(
+        key: keyScaffoldState,
         appBar: AppBar(
           title: Text('Preguntas de examen'),
           actions: <Widget>[
@@ -130,6 +130,20 @@ class _MyStatefulWidgetState extends State<MyStatefulWidget> {
                       : ""),
                 ),
               ),
+              ListTile(
+                title: Text(globals.DRAWER_ANADIR_PREGUNTAS),
+                trailing: Icon(Icons.add),
+                onTap: () => Navigator.of(context).pop(),
+              ),
+              ListTile(
+                  title: Text(globals.DRAWER_LISTA_DE_PREGUNTAS),
+                  trailing: Icon(Icons.playlist_add_check),
+                  onTap: () {
+                    Navigator.of(context).pop();
+                    Navigator.of(context).push(MaterialPageRoute(
+                        builder: (BuildContext context) =>
+                            ListaPreguntasPage()));
+                  }),
               ListTile(
                 title: Text("Close"),
                 trailing: Icon(Icons.close),
@@ -182,43 +196,35 @@ class _MyStatefulWidgetState extends State<MyStatefulWidget> {
                         ),
                       ),
                       ListTile(
-                      leading: Icon(Icons.check),
-                      title: Row(
-                        children: <Widget>[
-                          Text('Op1'),
-                          Radio(
-                            value: 1,
-                            groupValue: _radioValue,
-                            onChanged: (val) {
-                              _handleRadioValueChange(val);
-                            },
-                          ),
-                          Text('Op2'),
-                          Radio(
-                            value: 2,
-                            groupValue: _radioValue,
-                            onChanged: (val) {
-                              _handleRadioValueChange(val);
-                            },
-                          ),
-                          Text('Op3'),
-                          Radio(
-                            value: 3,
-                            groupValue: _radioValue,
-                            onChanged: (val) {
-                              _handleRadioValueChange(val);
-                            },
-                          )
-                        ],
-                      )),
-                      /*ListTile(
-                        leading: Icon(Icons.check),
-                        title: TextFormField(
-                          initialValue: "",
-                          onSaved: (val) => _pregunta.respuestaCorrecta = int.parse(val),
-                          validator: (val) => val == "" ? val : null,
-                        ),
-                      ),*/
+                          leading: Icon(Icons.check),
+                          title: Row(
+                            children: <Widget>[
+                              Text('Op1'),
+                              Radio(
+                                value: 1,
+                                groupValue: _radioValue,
+                                onChanged: (val) {
+                                  _handleRadioValueChange(val);
+                                },
+                              ),
+                              Text('Op2'),
+                              Radio(
+                                value: 2,
+                                groupValue: _radioValue,
+                                onChanged: (val) {
+                                  _handleRadioValueChange(val);
+                                },
+                              ),
+                              Text('Op3'),
+                              Radio(
+                                value: 3,
+                                groupValue: _radioValue,
+                                onChanged: (val) {
+                                  _handleRadioValueChange(val);
+                                },
+                              )
+                            ],
+                          )),
                       RaisedButton(
                         //padding: new EdgeInsets.all(0.0),
                         elevation: 5.0,
@@ -238,46 +244,23 @@ class _MyStatefulWidgetState extends State<MyStatefulWidget> {
               ),
             ),
             Flexible(
-                child: ListView.builder(
-                    shrinkWrap: true,
-                    itemCount: preguntas.length,
-                    itemBuilder: (BuildContext context, int index) {
-                      return ListTile(
-                        title: Text(
-                          preguntas[index].texto,
-                          style: TextStyle(fontSize: 20.0),
-                        ),
-                        subtitle: preguntas[index].respuestas != null ? Text(preguntas[index].respuestas[0] +
-                            ", " +
-                            preguntas[index].respuestas[1] +
-                            ", " +
-                            preguntas[index].respuestas[2]) : Text(''),
-                        onTap: () => Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => PreguntaPage(pregunta: preguntas[index]))),
-                        trailing: IconButton(
-                            icon: Icon(Icons.delete,
-                                color: Colors.grey, size: 20.0),
-                            onPressed: () {
-                              eliminarPregunta(index);
-                            }),
-                      );
-                    })
-                /*return new ListTile(
-                      leading: Icon(Icons.info),
-                      title: Text(preguntas[index].texto),
-                      subtitle: Text(preguntas[index].respuesta01 +
-                          " - " +
-                          preguntas[index].respuesta02 +
-                          " - " +
-                          preguntas[index].respuesta03),
-                      onLongPress: () {
-                        _showDialogDelete(context, preguntas[index].key, index);
-                      },
-                    );*/
-                //}),
-                )
+              child: _preguntaAnadida != null
+                  ? ListTile(
+                      title: Text(
+                        _preguntaAnadida.texto,
+                        style: TextStyle(fontSize: 20.0),
+                      ),
+                      subtitle: (_preguntaAnadida.respuestas != null &&
+                              _preguntaAnadida.respuestas.isNotEmpty)
+                          ? Text(_preguntaAnadida.respuestas[0] +
+                              ", " +
+                              _preguntaAnadida.respuestas[1] +
+                              ", " +
+                              _preguntaAnadida.respuestas[2])
+                          : Text(''),
+                    )
+                  : Text('Añade una pregunta'),
+            )
           ],
         ));
   }
@@ -287,34 +270,5 @@ class _MyStatefulWidgetState extends State<MyStatefulWidget> {
       _radioValue = value;
       _pregunta.respuestaCorrecta = _radioValue;
     });
-  }
-
-  _showDialogDelete(BuildContext context, String preguntaId, int index) async {
-    await showDialog<String>(
-        context: context,
-        builder: (BuildContext context) {
-          return AlertDialog(
-            content: new Row(
-              children: <Widget>[
-                new Expanded(
-                  child: new Text('¿Quieres eliminar la pregunta?'),
-                )
-              ],
-            ),
-            actions: <Widget>[
-              new FlatButton(
-                  child: const Text('No'),
-                  onPressed: () {
-                    Navigator.pop(context);
-                  }),
-              new FlatButton(
-                  child: const Text('Si'),
-                  onPressed: () async {
-                    eliminarPregunta(index);
-                    Navigator.pop(context);
-                  })
-            ],
-          );
-        });
   }
 }

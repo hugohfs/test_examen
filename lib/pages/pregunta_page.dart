@@ -1,5 +1,5 @@
 import 'package:test_examen/model/pregunta.dart';
-import 'package:test_examen/globals.dart' as globals;
+import 'package:test_examen/globals.dart' as g;
 import 'package:flutter/material.dart';
 
 class PreguntaPage extends StatefulWidget {
@@ -119,7 +119,7 @@ class _PreguntaPageState extends State<PreguntaPage> {
         return Padding(
             padding: const EdgeInsets.fromLTRB(0.0, 10.0, 0.0, 0.0),
             child: new Text(
-              globals.RESPUESTA_CORRECTA,
+              g.RESPUESTA_CORRECTA,
               style: TextStyle(
                   fontSize: 13.0,
                   color: Colors.green,
@@ -130,7 +130,7 @@ class _PreguntaPageState extends State<PreguntaPage> {
         return Padding(
             padding: const EdgeInsets.fromLTRB(0.0, 10.0, 0.0, 0.0),
             child: new Text(
-              globals.RESPUESTA_INCORRECTA,
+              g.RESPUESTA_INCORRECTA,
               style: TextStyle(
                   fontSize: 13.0,
                   color: Colors.red,

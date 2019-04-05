@@ -1,6 +1,6 @@
 import 'package:firebase_database/firebase_database.dart';
 import 'package:test_examen/model/pregunta.dart';
-import 'package:test_examen/globals.dart' as globals;
+import 'package:test_examen/globals.dart' as g;
 import 'package:flutter/material.dart';
 import 'package:test_examen/pages/pregunta_page.dart';
 
@@ -45,7 +45,7 @@ class _ListaPreguntasPageState extends State<ListaPreguntasPage> {
   @override
   Widget build(BuildContext context) {
     return new Scaffold(
-        appBar: AppBar(title: Text(globals.APPBAR_LISTA_DE_PREGUNTAS)),
+        appBar: AppBar(title: Text(g.APPBAR_LISTA_DE_PREGUNTAS)),
         body: _buildBody(context));
   }
 

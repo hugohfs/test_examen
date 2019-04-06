@@ -8,9 +8,10 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/services.dart';
+import 'package:test_examen/components/drawer.dart';
 import 'package:test_examen/model/pregunta.dart';
 import 'package:test_examen/pages/lista_preguntas_page.dart';
-import 'package:test_examen/globals.dart' as g;
+import 'package:test_examen/globals/globals.dart' as g;
 import 'package:fluttertoast/fluttertoast.dart';
 
 class AnadirPreguntaPage extends StatefulWidget {
@@ -94,12 +95,8 @@ class _AnadirPreguntaPageState extends State<AnadirPreguntaPage> {
         key: keyScaffoldState,
         appBar: AppBar(
           title: Text(g.APPBAR_ANADIR_PREGUNTAS),
-          actions: <Widget>[
-            IconButton(
-                icon: Icon((Icons.close)),
-                onPressed: () => SystemNavigator.pop())
-          ],
         ),
+        drawer: MyDrawer(),
         resizeToAvoidBottomPadding: false,
         body: Column(
           children: <Widget>[

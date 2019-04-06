@@ -1,5 +1,6 @@
+import 'package:test_examen/components/drawer.dart';
 import 'package:test_examen/model/pregunta.dart';
-import 'package:test_examen/globals.dart' as g;
+import 'package:test_examen/globals/globals.dart' as g;
 import 'package:flutter/material.dart';
 
 class PreguntaPage extends StatefulWidget {
@@ -22,7 +23,10 @@ class _PreguntaPageState extends State<PreguntaPage> {
   @override
   Widget build(BuildContext context) {
     return new Scaffold(
-        appBar: AppBar(title: Text('Pregunta')), body: _buildBody(context));
+        appBar: AppBar(title: Text('Pregunta')),
+        body: _buildBody(context),
+        drawer: MyDrawer(),
+    );
   }
 
   Widget _buildBody(BuildContext context) {

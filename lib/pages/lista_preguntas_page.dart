@@ -1,6 +1,7 @@
 import 'package:firebase_database/firebase_database.dart';
+import 'package:test_examen/components/drawer.dart';
 import 'package:test_examen/model/pregunta.dart';
-import 'package:test_examen/globals.dart' as g;
+import 'package:test_examen/globals/globals.dart' as g;
 import 'package:flutter/material.dart';
 import 'package:test_examen/pages/pregunta_page.dart';
 
@@ -11,7 +12,6 @@ class ListaPreguntasPage extends StatefulWidget {
 
 class _ListaPreguntasPageState extends State<ListaPreguntasPage> {
   List<Pregunta> _preguntas = List();
-  //Pregunta _pregunta = Pregunta('', ['', '', ''], -1);
   DatabaseReference _listaPreguntasRef;
 
   final FirebaseDatabase database = FirebaseDatabase.instance;
@@ -19,7 +19,6 @@ class _ListaPreguntasPageState extends State<ListaPreguntasPage> {
   @override
   void initState() {
     super.initState();
-    //_pregunta = Pregunta('',List<String>(),-1);
     _listaPreguntasRef = database.reference().child("preguntas");
 
     _listaPreguntasRef.onChildAdded.listen(_onEntryAdded);
@@ -46,7 +45,9 @@ class _ListaPreguntasPageState extends State<ListaPreguntasPage> {
   Widget build(BuildContext context) {
     return new Scaffold(
         appBar: AppBar(title: Text(g.APPBAR_LISTA_DE_PREGUNTAS)),
-        body: _buildBody(context));
+        body: _buildBody(context),
+        drawer: MyDrawer(),
+    );
   }
 
   Widget _buildBody(BuildContext context) {

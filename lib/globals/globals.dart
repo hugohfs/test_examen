@@ -10,6 +10,7 @@ Pregunta pregunta = Pregunta('',List<String>(),-1);
 
 /*main.dart*/
 final String APPBAR_MENU_PRINCIPAL = 'Test de examen';
+final String DRAWER_HOME = 'Home';
 final String DRAWER_ANADIR_PREGUNTAS = 'Añadir preguntas';
 final String DRAWER_LISTA_DE_PREGUNTAS = 'Lista de preguntas';
 

@@ -2,9 +2,12 @@
 
 Aplicacion para realizar pruebas de examen
 
-# Funcionalidades
+## Funcionalidades
 
--Anadir preguntas, respuestas, opcion corecta.
--Listar preguntas.
--Eliminar pregunta del listado.
--Responder pregunta del listado.
+Anadir preguntas, respuestas, opcion corecta.
+
+Listar preguntas.
+
+Eliminar pregunta del listado.
+
+Responder pregunta del listado.

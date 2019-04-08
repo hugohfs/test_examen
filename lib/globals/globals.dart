@@ -5,7 +5,7 @@ import 'package:test_examen/model/pregunta.dart';
 
 String userAccountName = 'test.examen@gmail.com';
 String userAccountEmail = 'test.examen@gmail.com';
-Pregunta pregunta = Pregunta('',List<String>(),-1);
+//Pregunta pregunta = Pregunta('',List<String>(),-1,'');
 
 
 /*main.dart*/

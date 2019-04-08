@@ -10,6 +10,9 @@ import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/services.dart';
 import 'package:test_examen/components/drawer.dart';
 import 'package:test_examen/model/pregunta.dart';
+import 'package:test_examen/model/test_examen.dart';
+import 'package:test_examen/model/usuario.dart';
+import 'package:test_examen/model/usuario_pregunta.dart';
 import 'package:test_examen/pages/lista_preguntas_page.dart';
 import 'package:test_examen/globals/globals.dart' as g;
 import 'package:fluttertoast/fluttertoast.dart';
@@ -21,28 +24,27 @@ class AnadirPreguntaPage extends StatefulWidget {
 
 class _AnadirPreguntaPageState extends State<AnadirPreguntaPage> {
   List<Pregunta> _preguntas = List();
-  Pregunta _pregunta = Pregunta('', ['', '', ''], -1);
+  Pregunta _pregunta = Pregunta('', ['', '', ''], -1,'');
+  TestExamen _testExamen; // = TestExamen(new List<Usuario>(), new List<Pregunta>(), new List<UsuarioPregunta>());
   Pregunta _preguntaAnadida;
-  DatabaseReference _preguntaRef;
+  DatabaseReference _textExamenRef;
 
   final FirebaseDatabase database = FirebaseDatabase.instance;
   final GlobalKey<FormState> formKey = GlobalKey<FormState>();
 
   final keyScaffoldState = new GlobalKey<ScaffoldState>();
 
-  String userAccountName = "test.email@gmail.com";
-  String userAccountEmail = "test.email@gmail.com";
-
   int _radioValue = 0;
 
   @override
   void initState() {
     super.initState();
-    _pregunta = Pregunta('', List<String>(), -1);
-    _preguntaRef = database.reference().child("preguntas");
+    _pregunta = Pregunta('', ['', '', ''], -1,'');
+    _testExamen = TestExamen(new List<Usuario>(), new List<Pregunta>(), new List<UsuarioPregunta>());
+    _textExamenRef = database.reference().child("textExamen");
 
-    _preguntaRef.onChildAdded.listen(_onEntryAdded);
-    _preguntaRef.onChildChanged.listen(_onEntryChanged);
+    _textExamenRef.onChildAdded.listen(_onEntryAdded);
+    _textExamenRef.onChildChanged.listen(_onEntryChanged);
   }
 
   _onEntryAdded(Event event) {
@@ -73,11 +75,13 @@ class _AnadirPreguntaPageState extends State<AnadirPreguntaPage> {
         form.save();
         form.reset();
         form.reset();
-        _preguntaRef.push().set(_pregunta.toJson());
+        //_textExamenRef.push().set(_testExamen.toJson());
+        _textExamenRef.child("preguntas").push().set(_pregunta.toJson());
 
         setState(() {
           _preguntaAnadida = _pregunta;
-          _pregunta = Pregunta('', List<String>(), -1);
+          _pregunta = Pregunta('', ['', '', ''], -1,'');
+          //_testExamen = TestExamen(new List<Usuario>(), new List<Pregunta>(), new List<UsuarioPregunta>());
           _radioValue = -1;
         });
 

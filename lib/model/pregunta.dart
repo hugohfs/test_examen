@@ -5,8 +5,10 @@ class Pregunta {
   String texto;
   List<String> respuestas;
   int respuestaCorrecta;
+  String explicacion;
 
-  Pregunta(this.texto, this.respuestas, this.respuestaCorrecta);
+  Pregunta(
+      this.texto, this.respuestas, this.respuestaCorrecta, this.explicacion);
 
   Pregunta.fromSnapshot(DataSnapshot snapshot)
       : key = snapshot.key,
@@ -17,13 +19,17 @@ class Pregunta {
             : null,
         respuestaCorrecta = snapshot.value["respuestaCorrecta"] != null
             ? snapshot.value["respuestaCorrecta"]
+            : null,
+        explicacion = snapshot.value["explicacion"] != null
+            ? snapshot.value["explicacion"]
             : null;
 
   toJson() {
     return {
       "texto": texto,
       "respuestas": respuestas,
-      "respuestaCorrecta": respuestaCorrecta
+      "respuestaCorrecta": respuestaCorrecta,
+      "explicacion": explicacion
     };
   }
 }

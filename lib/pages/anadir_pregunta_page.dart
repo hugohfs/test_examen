@@ -23,15 +23,18 @@ class AnadirPreguntaPage extends StatefulWidget {
 }
 
 class _AnadirPreguntaPageState extends State<AnadirPreguntaPage> {
-
   Usuario _usuario;
   UsuarioPregunta _usuarioPregunta;
   List<Usuario> _listaUsuarios = List();
   List<Pregunta> _listaPreguntas = List();
   List<UsuarioPregunta> _listaUsuarioPreguntas = List();
   Pregunta _pregunta;
-  TestExamen _testExamen; // = TestExamen(new List<Usuario>(), new List<Pregunta>(), new List<UsuarioPregunta>());
+  TestExamen
+      _testExamen; // = TestExamen(new List<Usuario>(), new List<Pregunta>(), new List<UsuarioPregunta>());
   Pregunta _preguntaAnadida;
+
+  bool existeUsuario = false;
+  bool existeUsuarioPregunta = false;
 
   DatabaseReference _testExamenRef;
   DatabaseReference _listaPreguntasRef;
@@ -50,21 +53,27 @@ class _AnadirPreguntaPageState extends State<AnadirPreguntaPage> {
   @override
   void initState() {
     super.initState();
-    _usuario = Usuario(g.userAccountName,g.userAccountEmail);
-    _pregunta = Pregunta('', [], -1,'');
-    _usuarioPregunta = UsuarioPregunta(_usuario, _pregunta);
-    _testExamen = TestExamen(new List<Usuario>(), new List<Pregunta>(), new List<UsuarioPregunta>());
+    _usuario = Usuario(g.userAccountName, g.userAccountEmail);
+    _pregunta = Pregunta('', [], -1, '');
+    _usuarioPregunta = UsuarioPregunta(_usuario, _pregunta, null, null);
+    _testExamen = TestExamen(
+        new List<Usuario>(), new List<Pregunta>(), new List<UsuarioPregunta>());
 
-    _listaPreguntasRef = database.reference().child("testExamen").child("preguntas");
-    _listaUsuariosRef = database.reference().child("testExamen").child("usuarios");
-    _listaUsuariosPreguntasRef = database.reference().child("testExamen").child("usuariosPreguntas");
+    _listaPreguntasRef =
+        database.reference().child("testExamen").child("preguntas");
+    _listaUsuariosRef =
+        database.reference().child("testExamen").child("usuarios");
+    _listaUsuariosPreguntasRef =
+        database.reference().child("testExamen").child("usuariosPreguntas");
 
     _listaPreguntasRef.onChildAdded.listen(_onEntryAddedPregunta);
     _listaPreguntasRef.onChildChanged.listen(_onEntryChangedPregunta);
     _listaUsuariosRef.onChildAdded.listen(_onEntryAddedUsuario);
     _listaUsuariosRef.onChildChanged.listen(_onEntryChangedUsuario);
-    _listaUsuariosPreguntasRef.onChildAdded.listen(_onEntryAddedUsuarioPregunta);
-    _listaUsuariosPreguntasRef.onChildChanged.listen(_onEntryChangedUsuarioPregunta);
+    _listaUsuariosPreguntasRef.onChildAdded
+        .listen(_onEntryAddedUsuarioPregunta);
+    _listaUsuariosPreguntasRef.onChildChanged
+        .listen(_onEntryChangedUsuarioPregunta);
 
     /*_testExamenRef = database.reference().child("textExamen");
 
@@ -91,19 +100,11 @@ class _AnadirPreguntaPageState extends State<AnadirPreguntaPage> {
 
   _onEntryAddedUsuario(Event event) {
     setState(() {
-      Usuario ususarioEvent = Usuario.fromSnapshot(event.snapshot);
-      bool existe = false;
-      _listaUsuarios.forEach((u) {
-        if (u.nombre == ususarioEvent.nombre) {
-          existe = true;
-        }
-      });
-      if (!existe) {
+      if (!existeUsuario) {
         _listaUsuarios.add(Usuario.fromSnapshot(event.snapshot));
       } else {
         print('El usuario ya existe.');
       }
-
     });
   }
 
@@ -156,13 +157,33 @@ class _AnadirPreguntaPageState extends State<AnadirPreguntaPage> {
         _testExamen.usuarioPreguntas.add(_usuarioPregunta);
 
         //_testExamenRef.push().set(_testExamen.toJson());
-        _listaUsuariosRef.push().set(_usuario.toJson());
+
+        _listaUsuarios.forEach((u) {
+          if (u.nombre == _usuario.nombre) {
+            existeUsuario = true;
+          }
+        });
+
+        _listaUsuarioPreguntas.forEach((up) {
+          if (up.usuario.nombre == _usuario.nombre &&
+              up.pregunta.texto == _pregunta.texto) {
+            existeUsuarioPregunta = true;
+          }
+        });
+
+        if (!existeUsuario) {
+          _listaUsuariosRef.push().set(_usuario.toJson());
+        }
+
+        if (!existeUsuarioPregunta) {
+          _listaUsuariosPreguntasRef.push().set(_usuarioPregunta.toJson());
+        }
+
         _listaPreguntasRef.push().set(_pregunta.toJson());
-        _listaUsuariosPreguntasRef.push().set(_usuarioPregunta.toJson());
 
         setState(() {
           _preguntaAnadida = _pregunta;
-          _pregunta = Pregunta('', [], -1,'');
+          _pregunta = Pregunta('', [], -1, '');
           _radioValue = -1;
         });
 
@@ -170,7 +191,6 @@ class _AnadirPreguntaPageState extends State<AnadirPreguntaPage> {
           msg: g.TOAST_PREGUNTA_ANADIDA,
           toastLength: Toast.LENGTH_SHORT,
         );
-
       }
     }
   }
@@ -284,19 +304,19 @@ class _AnadirPreguntaPageState extends State<AnadirPreguntaPage> {
             Flexible(
               child: _preguntaAnadida != null
                   ? ListTile(
-                title: Text(
-                  _preguntaAnadida.texto,
-                  style: TextStyle(fontSize: 20.0),
-                ),
-                subtitle: (_preguntaAnadida.respuestas != null &&
-                    _preguntaAnadida.respuestas.isNotEmpty)
-                    ? Text(_preguntaAnadida.respuestas[0] +
-                    ", " +
-                    _preguntaAnadida.respuestas[1] +
-                    ", " +
-                    _preguntaAnadida.respuestas[2])
-                    : Text(''),
-              )
+                      title: Text(
+                        _preguntaAnadida.texto,
+                        style: TextStyle(fontSize: 20.0),
+                      ),
+                      subtitle: (_preguntaAnadida.respuestas != null &&
+                              _preguntaAnadida.respuestas.isNotEmpty)
+                          ? Text(_preguntaAnadida.respuestas[0] +
+                              ", " +
+                              _preguntaAnadida.respuestas[1] +
+                              ", " +
+                              _preguntaAnadida.respuestas[2])
+                          : Text(''),
+                    )
                   : Text(''),
             )
           ],

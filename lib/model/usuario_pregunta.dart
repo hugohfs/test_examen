@@ -11,7 +11,7 @@ class UsuarioPregunta {
   bool correcta;
   //Rol rol;
 
-  UsuarioPregunta(this.usuario, this.pregunta);
+  UsuarioPregunta(this.usuario, this.pregunta, this.respuestaElegida, this.correcta);
 
   UsuarioPregunta.fromSnapshot(DataSnapshot snapshot)
       : key = snapshot.key,

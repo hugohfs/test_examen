@@ -126,16 +126,15 @@ class _PreguntaPageState extends State<PreguntaPage> {
               Text(
                 g.RESPUESTA_CORRECTA,
                 style: TextStyle(
-                    fontSize: 13.0,
+                    fontSize: 15.0,
                     color: Colors.green,
                     height: 1.0,
                     fontWeight: FontWeight.w400),
               ),
               Text(
-                widget.pregunta.explicacion,
+                "Explicacion: " + widget.pregunta.explicacion,
                 style: TextStyle(
-                    fontSize: 13.0,
-                    color: Colors.green,
+                    fontSize: 15.0,
                     height: 1.0,
                     fontWeight: FontWeight.w400),
               )

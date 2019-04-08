@@ -19,7 +19,7 @@ class _ListaPreguntasPageState extends State<ListaPreguntasPage> {
   @override
   void initState() {
     super.initState();
-    _listaPreguntasRef = database.reference().child("preguntas");
+    _listaPreguntasRef = database.reference().child("testExamen").child("preguntas");
 
     _listaPreguntasRef.onChildAdded.listen(_onEntryAdded);
     _listaPreguntasRef.onChildChanged.listen(_onEntryChanged);
@@ -83,7 +83,7 @@ class _ListaPreguntasPageState extends State<ListaPreguntasPage> {
 
   eliminarPregunta(int index) {
     String key = _preguntas[index].key;
-    _listaPreguntasRef.child(key).remove().then((_) {
+    _listaPreguntasRef.child("testExamen").child(key).remove().then((_) {
       print("Delete $key successful");
       setState(() {
         _preguntas.removeAt(index);

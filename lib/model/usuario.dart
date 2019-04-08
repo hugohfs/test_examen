@@ -22,4 +22,10 @@ class Usuario {
       "correo": correo
     };
   }
+
+  Usuario.fromJson(Map map){
+    this.nombre = map["nombre"];
+    this.correo = map["correo"];
+  }
+
 }

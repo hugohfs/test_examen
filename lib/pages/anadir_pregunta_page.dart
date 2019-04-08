@@ -23,44 +23,115 @@ class AnadirPreguntaPage extends StatefulWidget {
 }
 
 class _AnadirPreguntaPageState extends State<AnadirPreguntaPage> {
-  List<Pregunta> _preguntas = List();
-  Pregunta _pregunta = Pregunta('', ['', '', ''], -1,'');
+
+  Usuario _usuario;
+  UsuarioPregunta _usuarioPregunta;
+  List<Usuario> _listaUsuarios = List();
+  List<Pregunta> _listaPreguntas = List();
+  List<UsuarioPregunta> _listaUsuarioPreguntas = List();
+  Pregunta _pregunta;
   TestExamen _testExamen; // = TestExamen(new List<Usuario>(), new List<Pregunta>(), new List<UsuarioPregunta>());
   Pregunta _preguntaAnadida;
-  DatabaseReference _textExamenRef;
+
+  DatabaseReference _testExamenRef;
+  DatabaseReference _listaPreguntasRef;
+  DatabaseReference _listaUsuariosRef;
+  DatabaseReference _listaUsuariosPreguntasRef;
 
   final FirebaseDatabase database = FirebaseDatabase.instance;
   final GlobalKey<FormState> formKey = GlobalKey<FormState>();
 
   final keyScaffoldState = new GlobalKey<ScaffoldState>();
 
+  Query _usuarioQuery;
+
   int _radioValue = 0;
 
   @override
   void initState() {
     super.initState();
-    _pregunta = Pregunta('', ['', '', ''], -1,'');
+    _usuario = Usuario(g.userAccountName,g.userAccountEmail);
+    _pregunta = Pregunta('', [], -1,'');
+    _usuarioPregunta = UsuarioPregunta(_usuario, _pregunta);
     _testExamen = TestExamen(new List<Usuario>(), new List<Pregunta>(), new List<UsuarioPregunta>());
-    _textExamenRef = database.reference().child("textExamen");
 
-    _textExamenRef.onChildAdded.listen(_onEntryAdded);
-    _textExamenRef.onChildChanged.listen(_onEntryChanged);
+    _listaPreguntasRef = database.reference().child("testExamen").child("preguntas");
+    _listaUsuariosRef = database.reference().child("testExamen").child("usuarios");
+    _listaUsuariosPreguntasRef = database.reference().child("testExamen").child("usuariosPreguntas");
+
+    _listaPreguntasRef.onChildAdded.listen(_onEntryAddedPregunta);
+    _listaPreguntasRef.onChildChanged.listen(_onEntryChangedPregunta);
+    _listaUsuariosRef.onChildAdded.listen(_onEntryAddedUsuario);
+    _listaUsuariosRef.onChildChanged.listen(_onEntryChangedUsuario);
+    _listaUsuariosPreguntasRef.onChildAdded.listen(_onEntryAddedUsuarioPregunta);
+    _listaUsuariosPreguntasRef.onChildChanged.listen(_onEntryChangedUsuarioPregunta);
+
+    /*_testExamenRef = database.reference().child("textExamen");
+
+    _testExamenRef.onChildAdded.listen(_onEntryAdded);
+    _testExamenRef.onChildChanged.listen(_onEntryChanged);*/
   }
 
-  _onEntryAdded(Event event) {
+  _onEntryAddedPregunta(Event event) {
     setState(() {
-      _preguntas.add(Pregunta.fromSnapshot(event.snapshot));
+      _listaPreguntas.add(Pregunta.fromSnapshot(event.snapshot));
     });
   }
 
-  _onEntryChanged(Event event) {
-    var old = _preguntas.singleWhere((entry) {
+  _onEntryChangedPregunta(Event event) {
+    var old = _listaPreguntas.singleWhere((entry) {
       return entry.key == event.snapshot.key;
     });
 
     setState(() {
-      _preguntas[_preguntas.indexOf(old)] =
+      _listaPreguntas[_listaPreguntas.indexOf(old)] =
           Pregunta.fromSnapshot(event.snapshot);
+    });
+  }
+
+  _onEntryAddedUsuario(Event event) {
+    setState(() {
+      Usuario ususarioEvent = Usuario.fromSnapshot(event.snapshot);
+      bool existe = false;
+      _listaUsuarios.forEach((u) {
+        if (u.nombre == ususarioEvent.nombre) {
+          existe = true;
+        }
+      });
+      if (!existe) {
+        _listaUsuarios.add(Usuario.fromSnapshot(event.snapshot));
+      } else {
+        print('El usuario ya existe.');
+      }
+
+    });
+  }
+
+  _onEntryChangedUsuario(Event event) {
+    var old = _listaUsuarios.singleWhere((entry) {
+      return entry.key == event.snapshot.key;
+    });
+
+    setState(() {
+      _listaUsuarios[_listaUsuarios.indexOf(old)] =
+          Usuario.fromSnapshot(event.snapshot);
+    });
+  }
+
+  _onEntryAddedUsuarioPregunta(Event event) {
+    setState(() {
+      _listaUsuarioPreguntas.add(UsuarioPregunta.fromSnapshot(event.snapshot));
+    });
+  }
+
+  _onEntryChangedUsuarioPregunta(Event event) {
+    var old = _listaUsuarioPreguntas.singleWhere((entry) {
+      return entry.key == event.snapshot.key;
+    });
+
+    setState(() {
+      _listaUsuarioPreguntas[_listaUsuarioPreguntas.indexOf(old)] =
+          UsuarioPregunta.fromSnapshot(event.snapshot);
     });
   }
 
@@ -74,14 +145,24 @@ class _AnadirPreguntaPageState extends State<AnadirPreguntaPage> {
       } else {
         form.save();
         form.reset();
-        form.reset();
-        //_textExamenRef.push().set(_testExamen.toJson());
-        _textExamenRef.child("preguntas").push().set(_pregunta.toJson());
+
+        setState(() {
+          _usuarioPregunta.pregunta = _pregunta;
+          _usuarioPregunta.usuario = _usuario;
+        });
+
+        _testExamen.usuarios.add(_usuario);
+        _testExamen.preguntas.add(_pregunta);
+        _testExamen.usuarioPreguntas.add(_usuarioPregunta);
+
+        //_testExamenRef.push().set(_testExamen.toJson());
+        _listaUsuariosRef.push().set(_usuario.toJson());
+        _listaPreguntasRef.push().set(_pregunta.toJson());
+        _listaUsuariosPreguntasRef.push().set(_usuarioPregunta.toJson());
 
         setState(() {
           _preguntaAnadida = _pregunta;
-          _pregunta = Pregunta('', ['', '', ''], -1,'');
-          //_testExamen = TestExamen(new List<Usuario>(), new List<Pregunta>(), new List<UsuarioPregunta>());
+          _pregunta = Pregunta('', [], -1,'');
           _radioValue = -1;
         });
 
@@ -141,6 +222,14 @@ class _AnadirPreguntaPageState extends State<AnadirPreguntaPage> {
                         title: TextFormField(
                           initialValue: "",
                           onSaved: (val) => _pregunta.respuestas.add(val),
+                          validator: (val) => val == "" ? val : null,
+                        ),
+                      ),
+                      ListTile(
+                        leading: Icon(Icons.question_answer),
+                        title: TextFormField(
+                          initialValue: "",
+                          onSaved: (val) => _pregunta.explicacion = val,
                           validator: (val) => val == "" ? val : null,
                         ),
                       ),

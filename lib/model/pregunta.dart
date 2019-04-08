@@ -32,4 +32,16 @@ class Pregunta {
       "explicacion": explicacion
     };
   }
+
+  Pregunta.fromJson(Map json){
+    this.key = json["key"];
+    this.texto = json["texto"];
+    this.respuestas = json.containsKey('respuestas')
+        ? json['respuestas'].cast<String>()
+        : null;
+    this.respuestaCorrecta = json["respuestaCorrecta"];
+    this.explicacion = json["explicacion"];
+  }
+
 }
+

@@ -1,6 +1,8 @@
 
 import 'package:flutter/material.dart';
 import 'package:test_examen/pages/home_page.dart';
+import 'package:test_examen/pages/root_page.dart';
+import 'package:test_examen/services/authentication.dart';
 
 void main() => runApp(MyApp());
 
@@ -14,7 +16,8 @@ class MyApp extends StatelessWidget {
         theme: new ThemeData(
           primarySwatch: Colors.blue,
         ),
-        home: new HomePage()
+        home: new RootPage(auth: new Auth())
+      //home: new HomePage()
     );
   }
 }

@@ -3,9 +3,11 @@ library test_examen.globals;
 import 'package:test_examen/model/pregunta.dart';
 
 
-String userAccountName = 'test.examen@gmail.com';
-String userAccountEmail = 'test.examen@gmail.com';
+String userAccountName = 'usuario1';
+String userAccountEmail = 'usuario1.examen@gmail.com';
 //Pregunta pregunta = Pregunta('',List<String>(),-1,'');
+
+bool isEmailVerified = false;
 
 
 /*main.dart*/

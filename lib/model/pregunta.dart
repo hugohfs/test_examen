@@ -6,9 +6,10 @@ class Pregunta {
   List<String> respuestas;
   int respuestaCorrecta;
   String explicacion;
+  //List<String> usuarios;
 
   Pregunta(
-      this.texto, this.respuestas, this.respuestaCorrecta, this.explicacion);
+      this.texto, this.respuestas, this.respuestaCorrecta, this.explicacion, /*this.usuarios*/);
 
   Pregunta.fromSnapshot(DataSnapshot snapshot)
       : key = snapshot.key,
@@ -22,7 +23,10 @@ class Pregunta {
             : null,
         explicacion = snapshot.value["explicacion"] != null
             ? snapshot.value["explicacion"]
-            : null;
+            : null
+        /*usuarios = snapshot.value["usuarios"] != null
+            ? snapshot.value["usuarios"].cast<String>()
+            : null*/;
 
   toJson() {
     return {
@@ -41,6 +45,9 @@ class Pregunta {
         : null;
     this.respuestaCorrecta = json["respuestaCorrecta"];
     this.explicacion = json["explicacion"];
+    /*this.usuarios = json.containsKey('usuarios')
+        ? json['usuarios'].cast<String>()
+        : null;*/
   }
 
 }

@@ -31,14 +31,14 @@ class MyDrawer extends Drawer {
                 Navigator.of(context).push(MaterialPageRoute(
                     builder: (BuildContext context) => HomePage()));
               }),
-          ListTile(
+          /*ListTile(
               title: Text(g.DRAWER_ANADIR_PREGUNTAS),
               trailing: Icon(Icons.add),
               onTap: () {
                 Navigator.of(context).pop();
                 Navigator.of(context).push(MaterialPageRoute(
                     builder: (BuildContext context) => AnadirPreguntaPage()));
-              }),
+              }),*/
           ListTile(
               title: Text(g.DRAWER_LISTA_DE_PREGUNTAS),
               trailing: Icon(Icons.playlist_add_check),

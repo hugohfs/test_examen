@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:firebase_database/firebase_database.dart';
 import 'package:test_examen/components/drawer.dart';
 import 'package:test_examen/model/pregunta.dart';
@@ -16,13 +18,37 @@ class _ListaPreguntasPageState extends State<ListaPreguntasPage> {
 
   final FirebaseDatabase database = FirebaseDatabase.instance;
 
+  final FirebaseDatabase _database = FirebaseDatabase.instance;
+  StreamSubscription<Event> _onTodoAddedSubscription;
+  StreamSubscription<Event> _onTodoChangedSubscription;
+  Query _preguntasQuery;
+
   @override
   void initState() {
     super.initState();
-    _listaPreguntasRef = database.reference().child("testExamen").child("preguntas");
+
+    _preguntas = List();
+
+    _preguntasQuery = _database
+        .reference()
+        .child("testExamen")
+        .child("preguntas").orderByChild("usuarios/u1").equalTo(true);
+    _onTodoAddedSubscription = _preguntasQuery.onChildAdded.listen(_onEntryAdded);
+    _onTodoChangedSubscription = _preguntasQuery.onChildChanged.listen(_onEntryChanged);
+
+
+    /*_listaPreguntasRef = database.reference().child("testExamen").child("preguntas");
+    //Query queryPreguntas = _listaPreguntasRef.orderByChild("texto").equalTo("ccccc");
 
     _listaPreguntasRef.onChildAdded.listen(_onEntryAdded);
-    _listaPreguntasRef.onChildChanged.listen(_onEntryChanged);
+    _listaPreguntasRef.onChildChanged.listen(_onEntryChanged);*/
+  }
+
+  @override
+  void dispose() {
+    _onTodoAddedSubscription.cancel();
+    _onTodoChangedSubscription.cancel();
+    super.dispose();
   }
 
   _onEntryAdded(Event event) {
@@ -72,16 +98,16 @@ class _ListaPreguntasPageState extends State<ListaPreguntasPage> {
                 MaterialPageRoute(
                     builder: (context) =>
                         PreguntaPage(pregunta: _preguntas[index]))),
-            trailing: IconButton(
+            /*trailing: IconButton(
                 icon: Icon(Icons.delete, color: Colors.grey, size: 20.0),
                 onPressed: () {
                   eliminarPregunta(index);
-                }),
+                }),*/
           );
         });
   }
 
-  eliminarPregunta(int index) {
+  /*eliminarPregunta(int index) {
     String key = _preguntas[index].key;
     _listaPreguntasRef.child("testExamen").child(key).remove().then((_) {
       print("Delete $key successful");
@@ -89,5 +115,5 @@ class _ListaPreguntasPageState extends State<ListaPreguntasPage> {
         _preguntas.removeAt(index);
       });
     });
-  }
+  }*/
 }

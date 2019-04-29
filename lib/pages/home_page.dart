@@ -3,8 +3,6 @@ import 'package:flutter/services.dart';
 import 'package:test_examen/globals/globals.dart' as g;
 import 'package:test_examen/components/drawer.dart';
 import 'package:google_sign_in/google_sign_in.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import 'auth.dart';
 import 'package:test_examen/services/authentication.dart';
 
 /*class UserDetails {

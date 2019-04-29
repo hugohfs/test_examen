@@ -5,6 +5,7 @@ import 'package:test_examen/model/pregunta.dart';
 
 String userAccountName = 'usuario1';
 String userAccountEmail = 'usuario1.examen@gmail.com';
+String photoUrl = 'usuario1.examen@gmail.com';
 //Pregunta pregunta = Pregunta('',List<String>(),-1,'');
 
 bool isEmailVerified = false;

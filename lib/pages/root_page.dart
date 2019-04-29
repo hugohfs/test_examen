@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:test_examen/pages/login_signup_page.dart';
 import 'package:test_examen/services/authentication.dart';
 import 'package:test_examen/pages/home_page.dart';
+import 'package:test_examen/globals/globals.dart' as g;
 
 enum AuthStatus {
   NOT_DETERMINED,
@@ -29,6 +30,9 @@ class _RootPageState extends State<RootPage> {
       setState(() {
         if (user != null) {
           _userId = user?.uid;
+          g.photoUrl = user?.photoUrl;
+          g.userAccountName = user?.displayName;
+          g.userAccountEmail = user?.email;
         }
         authStatus =
         user?.uid == null ? AuthStatus.NOT_LOGGED_IN : AuthStatus.LOGGED_IN;

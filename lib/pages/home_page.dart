@@ -3,6 +3,9 @@ import 'package:flutter/services.dart';
 import 'package:test_examen/globals/globals.dart' as g;
 import 'package:test_examen/components/drawer.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:test_examen/model/user_info_details.dart';
+import 'package:test_examen/pages/login_signup_page.dart';
+import 'package:test_examen/pages/root_page.dart';
 import 'package:test_examen/services/authentication.dart';
 
 /*class UserDetails {
@@ -25,26 +28,8 @@ import 'package:test_examen/services/authentication.dart';
   UserDetails(this.providerId, this.uid, this.displayName, this.photoUrl,
       this.email, this.isAnonymous, this.isEmailVerified, this.providerData);
 }
+*/
 
-class UserInfoDetails {
-  UserInfoDetails(
-      this.providerId, this.displayName, this.email, this.photoUrl, this.uid);
-
-  /// The provider identifier.
-  final String providerId;
-
-  /// The provider’s user ID for the user.
-  final String uid;
-
-  /// The name of the user.
-  final String displayName;
-
-  /// The URL of the user’s profile photo.
-  final String photoUrl;
-
-  /// The user’s email address.
-  final String email;
-}*/
 
 class HomePage extends StatefulWidget {
   HomePage({Key key, this.auth, this.userId, this.onSignedOut})
@@ -148,7 +133,8 @@ class _HomePageState extends State<HomePage> {
     widget.auth.getCurrentUser().then((user) {
       setState(() {
         if (user != null) {
-          g.userAccountEmail = user?.email;
+          g.userInfoDetails = new UserInfoDetails(
+              user?.providerId, user?.displayName, user?.email, user?.photoUrl, user?.uid);
         }
       });
     });
@@ -222,10 +208,15 @@ class _HomePageState extends State<HomePage> {
   }
 
   _signOut() async {
-    Navigator.of(context).pop();
+    //Navigator.of(context).pop();
     try {
+      //await widget.auth.signOut();
       await widget.auth.signOut();
+      await widget.auth.signOutGoogle();
       widget.onSignedOut();
+
+      return new RootPage(auth: new Auth());
+
     } catch (e) {
       print(e);
     }
@@ -251,7 +242,8 @@ class _HomePageState extends State<HomePage> {
         title: Text(g.APPBAR_MENU_PRINCIPAL),
         actions: <Widget>[
           IconButton(
-              icon: Icon((Icons.close)), onPressed: () => SystemNavigator.pop())
+              //icon: Icon((Icons.power_settings_new)), onPressed: () => widget.auth.disconnect()),
+              icon: Icon((Icons.power_settings_new)), onPressed: _signOut),
         ],
       ),
       drawer: new MyDrawer(),
@@ -265,7 +257,7 @@ class _HomePageState extends State<HomePage> {
                 Padding(
                     padding: const EdgeInsets.fromLTRB(0.0, 50.0, 0.0, 0.0),
                     child: new Center(
-                        child: Text("Bienvenido a HFS test de examen.",
+                        child: Text("Bienvenido " + g.userInfoDetails.displayName,
                             style: new TextStyle(fontSize: 22.0)))),
                 /*Padding(
                     padding: const EdgeInsets.fromLTRB(0.0, 50.0, 0.0, 0.0),

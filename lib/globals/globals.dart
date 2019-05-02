@@ -1,11 +1,12 @@
 library test_examen.globals;
 
 import 'package:test_examen/model/pregunta.dart';
+import 'package:test_examen/model/user_info_details.dart';
 
-
-String userAccountName = 'usuario1';
+UserInfoDetails userInfoDetails = new UserInfoDetails('', '', '', '', '');
+/*String userAccountName = 'usuario1';
 String userAccountEmail = 'usuario1.examen@gmail.com';
-String photoUrl = 'usuario1.examen@gmail.com';
+String photoUrl = 'usuario1.examen@gmail.com';*/
 //Pregunta pregunta = Pregunta('',List<String>(),-1,'');
 
 bool isEmailVerified = false;

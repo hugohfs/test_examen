@@ -1,6 +1,8 @@
 import 'dart:async';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:test_examen/globals/globals.dart' as g;
+import 'package:test_examen/model/user_info_details.dart';
 
 abstract class BaseAuth {
   Future<String> signInWithGoogle();
@@ -14,6 +16,10 @@ abstract class BaseAuth {
   Future<void> sendEmailVerification();
 
   Future<void> signOut();
+
+  Future<void> signOutGoogle();
+
+  Future<void> disconnect();
 
   Future<bool> isEmailVerified();
 }
@@ -57,6 +63,10 @@ class Auth implements BaseAuth {
 
     //return 'signInWithGoogle succeeded: $user';
     print('signInWithGoogle succeeded: $user');
+
+    g.userInfoDetails =  new UserInfoDetails(
+        user.providerId, user.displayName, user.email, user.photoUrl, user.uid);
+
     return user.uid;
   }
 
@@ -79,6 +89,16 @@ class Auth implements BaseAuth {
 
   Future<void> signOut() async {
     return _firebaseAuth.signOut();
+  }
+
+  Future<void> signOutGoogle() async {
+    return _googleSignIn.signOut();
+  }
+
+  Future<void> disconnect() async {
+    await _firebaseAuth.signOut();
+    await _googleSignIn.signOut();
+    return _googleSignIn.disconnect();
   }
 
   Future<void> sendEmailVerification() async {

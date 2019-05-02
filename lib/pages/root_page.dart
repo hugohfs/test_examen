@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:test_examen/model/user_info_details.dart';
 import 'package:test_examen/pages/login_signup_page.dart';
 import 'package:test_examen/services/authentication.dart';
 import 'package:test_examen/pages/home_page.dart';
@@ -30,9 +31,8 @@ class _RootPageState extends State<RootPage> {
       setState(() {
         if (user != null) {
           _userId = user?.uid;
-          g.photoUrl = user?.photoUrl;
-          g.userAccountName = user?.displayName;
-          g.userAccountEmail = user?.email;
+          g.userInfoDetails = new UserInfoDetails(
+              user?.providerId, user?.displayName, user?.email, user?.photoUrl, user?.uid);
         }
         authStatus =
         user?.uid == null ? AuthStatus.NOT_LOGGED_IN : AuthStatus.LOGGED_IN;

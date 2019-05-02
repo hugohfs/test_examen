@@ -14,22 +14,22 @@ class MyDrawer extends Drawer {
       child: ListView(
         children: <Widget>[
           UserAccountsDrawerHeader(
-            accountName: Text(g.userAccountName),
-            accountEmail: Text(g.userAccountEmail),
-            /*decoration: new BoxDecoration(
-              image: new DecorationImage(
-                fit: BoxFit.fill,
-                  image: NetworkImage(g.photoUrl)
-              )
-            ),*/
+            accountName: Text(g.userInfoDetails.displayName),
+            accountEmail: Text(g.userInfoDetails.email),
             currentAccountPicture: new CircleAvatar(
               backgroundColor: Colors.white,
-              backgroundImage: NetworkImage(g.photoUrl),
+              backgroundImage: NetworkImage(g.userInfoDetails.photoUrl),
               /*child: Text(
                   g.userAccountEmail.length > 0
                   ? g.userAccountEmail[0].toUpperCase()
                   : ""),*/
             ),
+            /*decoration: new BoxDecoration(
+                image: new DecorationImage(
+                    fit: BoxFit.fill,
+                    image: NetworkImage(g.photoUrl)
+                )
+            ),*/
           ),
           ListTile(
               title: Text(g.DRAWER_HOME),

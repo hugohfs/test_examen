@@ -45,8 +45,8 @@ class _LoginSignUpPageState extends State<LoginSignUpPage> {
       String userId = "";
       try {
         if (_formMode == FormMode.LOGIN) {
-          //userId = await widget.auth.signIn(_email, _password);
-          userId = await widget.auth.signInWithGoogle();
+          userId = await widget.auth.signIn(_email, _password);
+          //userId = await widget.auth.signInWithGoogle();
           print('Signed in: $userId');
         } else {
           userId = await widget.auth.signUp(_email, _password);
@@ -73,6 +73,37 @@ class _LoginSignUpPageState extends State<LoginSignUpPage> {
         });
       }
     }
+  }
+
+  // Perform login or signup
+  void _loginWithGoogle() async {
+    setState(() {
+      _errorMessage = "";
+      _isLoading = true;
+    });
+      String userId = "";
+      try {
+
+        userId = await widget.auth.signInWithGoogle();
+
+        setState(() {
+          _isLoading = false;
+        });
+
+        if (userId.length > 0 && userId != null && _formMode == FormMode.LOGIN) {
+          widget.onSignedIn();
+        }
+
+      } catch (e) {
+        print('Error: $e');
+        setState(() {
+          _isLoading = false;
+          if (_isIos) {
+            _errorMessage = e.details;
+          } else
+            _errorMessage = e.message;
+        });
+      }
   }
 
 
@@ -157,6 +188,7 @@ class _LoginSignUpPageState extends State<LoginSignUpPage> {
               _showPrimaryButton(),
               _showSecondaryButton(),
               _showErrorMessage(),
+              _showGoogleButton(),
             ],
           ),
         ));
@@ -183,7 +215,7 @@ class _LoginSignUpPageState extends State<LoginSignUpPage> {
     return new Hero(
       tag: 'hero',
       child: Padding(
-        padding: EdgeInsets.fromLTRB(0.0, 70.0, 0.0, 0.0),
+        padding: EdgeInsets.fromLTRB(0.0, 50.0, 0.0, 0.0),
         child: CircleAvatar(
           backgroundColor: Colors.transparent,
           radius: 48.0,
@@ -195,7 +227,7 @@ class _LoginSignUpPageState extends State<LoginSignUpPage> {
 
   Widget _showEmailInput() {
     return Padding(
-      padding: const EdgeInsets.fromLTRB(0.0, 100.0, 0.0, 0.0),
+      padding: const EdgeInsets.fromLTRB(0.0, 50.0, 0.0, 0.0),
       child: new TextFormField(
         maxLines: 1,
         keyboardType: TextInputType.emailAddress,
@@ -234,7 +266,7 @@ class _LoginSignUpPageState extends State<LoginSignUpPage> {
   Widget _showSecondaryButton() {
     return new FlatButton(
       child: _formMode == FormMode.LOGIN
-          ? new Text('Create an account',
+          ? new Text('Create an email account',
           style: new TextStyle(fontSize: 18.0, fontWeight: FontWeight.w300))
           : new Text('Have an account? Sign in',
           style:
@@ -247,7 +279,7 @@ class _LoginSignUpPageState extends State<LoginSignUpPage> {
 
   Widget _showPrimaryButton() {
     return new Padding(
-        padding: EdgeInsets.fromLTRB(0.0, 45.0, 0.0, 0.0),
+        padding: EdgeInsets.fromLTRB(0.0, 25.0, 0.0, 0.0),
         child: SizedBox(
           height: 40.0,
           child: new RaisedButton(
@@ -255,12 +287,31 @@ class _LoginSignUpPageState extends State<LoginSignUpPage> {
             shape: new RoundedRectangleBorder(borderRadius: new BorderRadius.circular(30.0)),
             color: Colors.blue,
             child: _formMode == FormMode.LOGIN
-                ? new Text('Login',
+                ? new Text('Login with email',
                 style: new TextStyle(fontSize: 20.0, color: Colors.white))
-                : new Text('Create account',
+                : new Text('Create an email account',
                 style: new TextStyle(fontSize: 20.0, color: Colors.white)),
             onPressed: _validateAndSubmit,
           ),
         ));
   }
+
+  Widget _showGoogleButton() {
+    return _formMode == FormMode.LOGIN
+      ? new Padding(
+        padding: EdgeInsets.fromLTRB(0.0, 45.0, 0.0, 0.0),
+        child: SizedBox(
+          height: 40.0,
+          child: new RaisedButton(
+            elevation: 5.0,
+            shape: new RoundedRectangleBorder(borderRadius: new BorderRadius.circular(30.0)),
+            color: Colors.red,
+            child: new Text('Login with Google',
+                style: new TextStyle(fontSize: 20.0, color: Colors.white)),
+            onPressed: _loginWithGoogle,
+          ),
+        ))
+      : new Text('');
+  }
+
 }

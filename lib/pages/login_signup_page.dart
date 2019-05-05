@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:test_examen/services/authentication.dart';
+import 'package:flutter_auth_buttons/flutter_auth_buttons.dart';
+import 'package:test_examen/globals/globals.dart' as g;
 
 class LoginSignUpPage extends StatefulWidget {
   LoginSignUpPage({this.auth, this.onSignedIn});
@@ -58,10 +60,11 @@ class _LoginSignUpPageState extends State<LoginSignUpPage> {
           _isLoading = false;
         });
 
-        if (userId.length > 0 && userId != null && _formMode == FormMode.LOGIN) {
+        if (userId.length > 0 &&
+            userId != null &&
+            _formMode == FormMode.LOGIN) {
           widget.onSignedIn();
         }
-
       } catch (e) {
         print('Error: $e');
         setState(() {
@@ -75,37 +78,34 @@ class _LoginSignUpPageState extends State<LoginSignUpPage> {
     }
   }
 
-  // Perform login or signup
+  // Perform login or signup with Google
   void _loginWithGoogle() async {
     setState(() {
       _errorMessage = "";
       _isLoading = true;
     });
-      String userId = "";
-      try {
+    String userId = "";
+    try {
+      userId = await widget.auth.signInWithGoogle();
 
-        userId = await widget.auth.signInWithGoogle();
+      setState(() {
+        _isLoading = false;
+      });
 
-        setState(() {
-          _isLoading = false;
-        });
-
-        if (userId.length > 0 && userId != null && _formMode == FormMode.LOGIN) {
-          widget.onSignedIn();
-        }
-
-      } catch (e) {
-        print('Error: $e');
-        setState(() {
-          _isLoading = false;
-          if (_isIos) {
-            _errorMessage = e.details;
-          } else
-            _errorMessage = e.message;
-        });
+      if (userId.length > 0 && userId != null && _formMode == FormMode.LOGIN) {
+        widget.onSignedIn();
       }
+    } catch (e) {
+      print('Error: $e');
+      setState(() {
+        _isLoading = false;
+        if (_isIos) {
+          _errorMessage = e.details;
+        } else
+          _errorMessage = e.message;
+      });
+    }
   }
-
 
   @override
   void initState() {
@@ -140,16 +140,19 @@ class _LoginSignUpPageState extends State<LoginSignUpPage> {
         body: Stack(
           children: <Widget>[
             _showBody(),
-            _showCircularProgress(),
+            //_showCircularProgress(),
           ],
         ));
   }
 
-  Widget _showCircularProgress(){
+  Widget _showCircularProgress() {
     if (_isLoading) {
       return Center(child: CircularProgressIndicator());
-    } return Container(height: 0.0, width: 0.0,);
-
+    }
+    return Container(
+      height: 0.0,
+      width: 0.0,
+    );
   }
 
   void _showVerifyEmailSentDialog() {
@@ -159,7 +162,8 @@ class _LoginSignUpPageState extends State<LoginSignUpPage> {
         // return object of type Dialog
         return AlertDialog(
           title: new Text("Verify your account"),
-          content: new Text("Link to verify account has been sent to your email"),
+          content:
+              new Text("Link to verify account has been sent to your email"),
           actions: <Widget>[
             new FlatButton(
               child: new Text("Dismiss"),
@@ -174,7 +178,7 @@ class _LoginSignUpPageState extends State<LoginSignUpPage> {
     );
   }
 
-  Widget _showBody(){
+  Widget _showBody() {
     return new Container(
         padding: EdgeInsets.all(16.0),
         child: new Form(
@@ -233,12 +237,12 @@ class _LoginSignUpPageState extends State<LoginSignUpPage> {
         keyboardType: TextInputType.emailAddress,
         autofocus: false,
         decoration: new InputDecoration(
-            hintText: 'Email',
+            hintText: g.CORREO,
             icon: new Icon(
               Icons.mail,
               color: Colors.grey,
             )),
-        validator: (value) => value.isEmpty ? 'Email can\'t be empty' : null,
+        validator: (value) => value.isEmpty ? g.CORREO_VACIO : null,
         onSaved: (value) => _email = value,
       ),
     );
@@ -252,12 +256,12 @@ class _LoginSignUpPageState extends State<LoginSignUpPage> {
         obscureText: true,
         autofocus: false,
         decoration: new InputDecoration(
-            hintText: 'Password',
+            hintText: g.CONTRASENYA,
             icon: new Icon(
               Icons.lock,
               color: Colors.grey,
             )),
-        validator: (value) => value.isEmpty ? 'Password can\'t be empty' : null,
+        validator: (value) => value.isEmpty ? g.CONTRASENYA_VACIA : null,
         onSaved: (value) => _password = value,
       ),
     );
@@ -266,11 +270,11 @@ class _LoginSignUpPageState extends State<LoginSignUpPage> {
   Widget _showSecondaryButton() {
     return new FlatButton(
       child: _formMode == FormMode.LOGIN
-          ? new Text('Create an email account',
-          style: new TextStyle(fontSize: 18.0, fontWeight: FontWeight.w300))
-          : new Text('Have an account? Sign in',
-          style:
-          new TextStyle(fontSize: 18.0, fontWeight: FontWeight.w300)),
+          ? new Text(g.CREAR_CUENTA_CORREO,
+              style: new TextStyle(fontSize: 18.0, fontWeight: FontWeight.w300))
+          : new Text(g.TIENES_CUENTA_INICIA_SESION,
+              style:
+                  new TextStyle(fontSize: 18.0, fontWeight: FontWeight.w300)),
       onPressed: _formMode == FormMode.LOGIN
           ? _changeFormToSignUp
           : _changeFormToLogin,
@@ -284,34 +288,38 @@ class _LoginSignUpPageState extends State<LoginSignUpPage> {
           height: 40.0,
           child: new RaisedButton(
             elevation: 5.0,
-            shape: new RoundedRectangleBorder(borderRadius: new BorderRadius.circular(30.0)),
+            shape: new RoundedRectangleBorder(
+                borderRadius: new BorderRadius.circular(30.0)),
             color: Colors.blue,
             child: _formMode == FormMode.LOGIN
-                ? new Text('Login with email',
-                style: new TextStyle(fontSize: 20.0, color: Colors.white))
-                : new Text('Create an email account',
-                style: new TextStyle(fontSize: 20.0, color: Colors.white)),
+                ? new Text(g.INICIAR_SESION_CORREO,
+                    style: new TextStyle(fontSize: 20.0, color: Colors.white))
+                : new Text(g.CREAR_CUENTA_CORREO,
+                    style: new TextStyle(fontSize: 20.0, color: Colors.white)),
             onPressed: _validateAndSubmit,
           ),
         ));
   }
 
   Widget _showGoogleButton() {
-    return _formMode == FormMode.LOGIN
-      ? new Padding(
+    return new Padding(
         padding: EdgeInsets.fromLTRB(0.0, 45.0, 0.0, 0.0),
         child: SizedBox(
-          height: 40.0,
-          child: new RaisedButton(
+            height: 40.0,
+            child:
+                /*new RaisedButton(
             elevation: 5.0,
             shape: new RoundedRectangleBorder(borderRadius: new BorderRadius.circular(30.0)),
             color: Colors.red,
             child: new Text('Login with Google',
                 style: new TextStyle(fontSize: 20.0, color: Colors.white)),
             onPressed: _loginWithGoogle,
-          ),
-        ))
-      : new Text('');
+          ),*/
+                new GoogleSignInButton(
+              text: g.INICIAR_SESION_GOOGLE,
+              onPressed: _loginWithGoogle,
+              darkMode: false, // default: false
+              borderRadius: 30.0,
+            )));
   }
-
 }

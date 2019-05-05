@@ -47,6 +47,8 @@ dependencies:
   cloud_firestore: ^0.8.2+3
   google_sign_in:
 
+  flutter_auth_buttons:
+
 
 dev_dependencies:
   flutter_test:

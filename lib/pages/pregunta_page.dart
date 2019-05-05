@@ -2,9 +2,16 @@ import 'package:test_examen/components/drawer.dart';
 import 'package:test_examen/model/pregunta.dart';
 import 'package:test_examen/globals/globals.dart' as g;
 import 'package:flutter/material.dart';
+import 'package:test_examen/services/authentication.dart';
 
 class PreguntaPage extends StatefulWidget {
-  PreguntaPage({Key key, this.pregunta}) : super(key: key);
+  PreguntaPage(
+      {Key key, this.pregunta, this.auth, this.userId, this.onSignedOut})
+      : super(key: key);
+
+  final BaseAuth auth;
+  final VoidCallback onSignedOut;
+  final String userId;
 
   final Pregunta pregunta;
   @override

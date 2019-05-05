@@ -30,7 +30,6 @@ import 'package:test_examen/services/authentication.dart';
 }
 */
 
-
 class HomePage extends StatefulWidget {
   HomePage({Key key, this.auth, this.userId, this.onSignedOut})
       : super(key: key);
@@ -44,7 +43,6 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-
   GoogleSignIn _googleAuth = new GoogleSignIn();
 
   /*final FirebaseAuth _fAuth = FirebaseAuth.instance;
@@ -128,16 +126,20 @@ class _HomePageState extends State<HomePage> {
 
     //_tabController = new TabController(length: 5, vsync: this);
 
-    _checkEmailVerification();
+    if (g.userInfoDetails != null) {
+      print('userInfoDetails.displayName:' + g.userInfoDetails.displayName);
+    } else {
+      _checkEmailVerification();
 
-    widget.auth.getCurrentUser().then((user) {
-      setState(() {
-        if (user != null) {
-          g.userInfoDetails = new UserInfoDetails(
-              user?.providerId, user?.displayName, user?.email, user?.photoUrl, user?.uid);
-        }
+      widget.auth.getCurrentUser().then((user) {
+        setState(() {
+          if (user != null) {
+            g.userInfoDetails = new UserInfoDetails(user?.providerId,
+                user?.displayName, user?.email, user?.photoUrl, user?.uid);
+          }
+        });
       });
-    });
+    }
   }
 
   void _checkEmailVerification() async {
@@ -188,7 +190,7 @@ class _HomePageState extends State<HomePage> {
         return AlertDialog(
           title: new Text("Verify your account"),
           content:
-          new Text("Link to verify account has been sent to your email"),
+              new Text("Link to verify account has been sent to your email"),
           actions: <Widget>[
             new FlatButton(
               child: new Text("Dismiss"),
@@ -213,10 +215,10 @@ class _HomePageState extends State<HomePage> {
       //await widget.auth.signOut();
       await widget.auth.signOut();
       await widget.auth.signOutGoogle();
+      //await widget.auth.disconnect();
       widget.onSignedOut();
 
       return new RootPage(auth: new Auth());
-
     } catch (e) {
       print(e);
     }
@@ -226,7 +228,7 @@ class _HomePageState extends State<HomePage> {
     return new Hero(
       tag: 'hero', //TODO:
       child: Padding(
-        padding: EdgeInsets.fromLTRB(0.0, 100.0, 0.0, 0.0),
+        padding: EdgeInsets.fromLTRB(0.0, 50.0, 0.0, 0.0),
         child: CircleAvatar(
           backgroundColor: Colors.transparent,
           radius: 48.0,
@@ -243,10 +245,14 @@ class _HomePageState extends State<HomePage> {
         actions: <Widget>[
           IconButton(
               //icon: Icon((Icons.power_settings_new)), onPressed: () => widget.auth.disconnect()),
-              icon: Icon((Icons.power_settings_new)), onPressed: _signOut),
+              icon: Icon((Icons.power_settings_new)),
+              onPressed: _signOut),
         ],
       ),
-      drawer: new MyDrawer(),
+      drawer: new MyDrawer(
+          auth: widget.auth,
+          userId: widget.userId,
+          onSignedOut: widget.onSignedOut),
       resizeToAvoidBottomPadding: false,
       body: Center(
         child: Column(
@@ -257,86 +263,9 @@ class _HomePageState extends State<HomePage> {
                 Padding(
                     padding: const EdgeInsets.fromLTRB(0.0, 50.0, 0.0, 0.0),
                     child: new Center(
-                        child: Text("Bienvenido " + g.userInfoDetails.displayName,
+                        child: Text(
+                            "Bienvenido: " + g.userInfoDetails.displayName,
                             style: new TextStyle(fontSize: 22.0)))),
-                /*Padding(
-                    padding: const EdgeInsets.fromLTRB(0.0, 50.0, 0.0, 0.0),
-                    child: new RaisedButton(
-                        child: Text("Login with google",
-                            style: new TextStyle(fontSize: 22.0)),
-                    onPressed: () {
-                          _googleAuth.signIn().then((result){
-                            result.authentication.then((googleKey){
-                              FirebaseAuth.instance.signInWithCredential(credential)
-                                idToken: googleKey.accessToken,
-                                accessToken: googleKey.accessToken
-                              ).then((signedInUser){
-                                print("Signed is as ${signedInUser.displayname}");
-                                Navigator.of(context).pushReplacementNamed("/home_page");
-                              }).catchError((e){
-                                    print(e);
-                                  });
-                            }).catchError((e) {
-                              print(e);
-                            });
-                          }).catchError((e) {
-                            print(e);
-                          });
-                    },)),*/
-                /*Padding(
-                  padding: const EdgeInsets.fromLTRB(0.0, 50.0, 0.0, 0.0),
-                  child: Center(
-                      child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: <Widget>[
-                        StreamBuilder(
-                            stream: authService.user,
-                            builder: (context, snapshot) {
-                              if (snapshot.hasData) {
-                                return MaterialButton(
-                                  onPressed: () => authService.signOut(),
-                                  color: Colors.red,
-                                  textColor: Colors.white,
-                                  child: Text('Signout'),
-                                );
-                              } else {
-                                return MaterialButton(
-                                  onPressed: () => authService.googleSignIn(),
-                                  color: Colors.white,
-                                  textColor: Colors.black,
-                                  child: Text('Login with Google'),
-                                );
-                              }
-                            })
-                      ])),
-                )*/
-                /*Padding(
-                    padding: const EdgeInsets.fromLTRB(0.0, 50.0, 0.0, 0.0),
-                    child: new Builder(
-                      builder: (BuildContext context) {
-                        return new Material(
-                          borderRadius: new BorderRadius.circular(30.0),
-                          child: new Material(
-                            elevation: 5.0,
-                            child: new MaterialButton(
-                              //padding: new EdgeInsets.all(16.0),
-                              minWidth: 150.0,
-                              onPressed: () => _signIn(context)
-                                  .then((FirebaseUser user) => print(user))
-                                  .catchError((e) => print(e)),
-                              child: new Text('Sign in with Google'),
-                              color: Colors.lightBlueAccent,
-                            ),
-                          ),
-                        );
-                      },
-                    ))*/
-
-                /*Padding(
-                    padding: const EdgeInsets.fromLTRB(0.0, 30.0, 0.0, 0.0),
-                    child: new Center(
-                        child: Text("Puedes navegar por la opciones del menú.",
-                            style: new TextStyle(fontSize: 22.0))))*/
               ]),
             )
           ],

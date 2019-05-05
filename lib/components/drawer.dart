@@ -4,9 +4,17 @@ import 'package:flutter/material.dart';
 import 'package:test_examen/pages/anadir_pregunta_page.dart';
 import 'package:test_examen/pages/home_page.dart';
 import 'package:test_examen/pages/lista_preguntas_page.dart';
+import 'package:test_examen/services/authentication.dart';
 
 class MyDrawer extends Drawer {
-  MyDrawer({Key key, Widget child}) : super(key: key, child: child);
+  //MyDrawer({Key key, Widget child}) : super(key: key, child: child);
+
+  MyDrawer({Key key, this.auth, this.userId, this.onSignedOut})
+      : super(key: key);
+
+  final BaseAuth auth;
+  final VoidCallback onSignedOut;
+  final String userId;
 
   @override
   Widget build(BuildContext context) {
@@ -32,12 +40,12 @@ class MyDrawer extends Drawer {
             ),*/
           ),
           ListTile(
-              title: Text(g.DRAWER_HOME),
+              title: Text(g.DRAWER_INICIO),
               trailing: Icon(Icons.home),
               onTap: () {
                 Navigator.of(context).pop();
                 Navigator.of(context).push(MaterialPageRoute(
-                    builder: (BuildContext context) => HomePage()));
+                    builder: (BuildContext context) => HomePage(auth: auth, userId: userId, onSignedOut: onSignedOut)));
               }),
           /*ListTile(
               title: Text(g.DRAWER_ANADIR_PREGUNTAS),
@@ -53,15 +61,16 @@ class MyDrawer extends Drawer {
               onTap: () {
                 Navigator.of(context).pop();
                 Navigator.of(context).push(MaterialPageRoute(
-                    builder: (BuildContext context) => ListaPreguntasPage()));
+                    builder: (BuildContext context) => ListaPreguntasPage(auth: auth, userId: userId, onSignedOut: onSignedOut)));
               }),
+          Divider(),
           ListTile(
-            title: Text("Close"),
+            title: Text(g.DRAWER_CERRAR),
             trailing: Icon(Icons.close),
             onTap: () => Navigator.of(context).pop(),
           ),
           ListTile(
-            title: Text("Exit"),
+            title: Text(g.DRAWER_SALIR),
             trailing: Icon(Icons.exit_to_app),
             onTap: () => SystemNavigator.pop(),
           )

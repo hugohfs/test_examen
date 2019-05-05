@@ -11,12 +11,23 @@ String photoUrl = 'usuario1.examen@gmail.com';*/
 
 bool isEmailVerified = false;
 
+/*login_signup_page.dart*/
+final String CORREO = 'Correo';
+final String CONTRASENYA = 'Contraseña';
+final String INICIAR_SESION_CORREO = 'Iniciar sesión con correo';
+final String CREAR_CUENTA_CORREO = 'Crear una cuenta con correo';
+final String TIENES_CUENTA_INICIA_SESION = 'Tienes una cuenta? Inicia sesión';
+final String CORREO_VACIO = 'El correo no puede estar vacío';
+final String CONTRASENYA_VACIA = 'La contraseña no puede estar vacía';
+final String INICIAR_SESION_GOOGLE = 'Iniciar sesión con Google';
 
 /*main.dart*/
 final String APPBAR_MENU_PRINCIPAL = 'Test de examen';
-final String DRAWER_HOME = 'Home';
+final String DRAWER_INICIO = 'Inicio';
 final String DRAWER_ANADIR_PREGUNTAS = 'Añadir preguntas';
 final String DRAWER_LISTA_DE_PREGUNTAS = 'Lista de preguntas';
+final String DRAWER_CERRAR = 'Cerrar';
+final String DRAWER_SALIR = 'Salir';
 
 /*anadir_pregunta_page.dart*/
 final String TOAST_PREGUNTA_ANADIDA = 'Pregunta añadida correctamente.';

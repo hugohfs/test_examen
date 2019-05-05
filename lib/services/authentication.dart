@@ -48,7 +48,7 @@ class Auth implements BaseAuth {
     await googleUser.authentication;
 
     final FirebaseUser user =
-    await FirebaseAuth.instance.signInWithGoogle(
+    await _firebaseAuth.signInWithGoogle(
       accessToken: googleAuth.accessToken,
       idToken: googleAuth.idToken,
     );

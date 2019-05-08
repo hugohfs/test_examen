@@ -17,7 +17,8 @@ class Usuario {
         correo =
         snapshot.value["correo"] != null ? snapshot.value["correo"] : null,
         temas =
-        snapshot.value["temas"] != null ? snapshot.value["temas"] : null;
+        snapshot.value["temas"] != null ? snapshot.value["temas"].cast<String>(): null;
+
 
   toJson() {
     return {

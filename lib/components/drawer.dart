@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:test_examen/pages/anadir_pregunta_page.dart';
 import 'package:test_examen/pages/home_page.dart';
 import 'package:test_examen/pages/lista_preguntas_page.dart';
+import 'package:test_examen/pages/root_page.dart';
 import 'package:test_examen/services/authentication.dart';
 
 class MyDrawer extends Drawer {
@@ -64,14 +65,30 @@ class MyDrawer extends Drawer {
                     builder: (BuildContext context) => ListaPreguntasPage(auth: auth, userId: userId, onSignedOut: onSignedOut)));
               }),
           Divider(),
-          ListTile(
+          /*ListTile(
             title: Text(g.DRAWER_CERRAR),
             trailing: Icon(Icons.close),
             onTap: () => Navigator.of(context).pop(),
+          ),*/
+          ListTile(
+            title: Text(g.DRAWER_CERRAR_SESISON),
+            trailing: Icon(Icons.exit_to_app),
+            onTap: () {
+              Navigator.of(context).pop();
+              auth.signOut();
+              auth.signOutGoogle();
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => new RootPage(auth: new Auth())));
+
+              /*Navigator.of(context).push(MaterialPageRoute(
+                  builder: (BuildContext context) => new RootPage(auth: new Auth())));*/
+              },
           ),
           ListTile(
             title: Text(g.DRAWER_SALIR),
-            trailing: Icon(Icons.exit_to_app),
+            trailing: Icon(Icons.close),
             onTap: () => SystemNavigator.pop(),
           )
         ],

@@ -13,8 +13,10 @@ class Tema {
       : key = snapshot.key,
         nombre =
         snapshot.value["nombre"] != null ? snapshot.value["nombre"] : null,
+        /*preguntas =
+        snapshot.value["preguntas"] != null ? snapshot.value["preguntas"] : null,*/
         preguntas =
-        snapshot.value["preguntas"] != null ? snapshot.value["preguntas"] : null;
+        snapshot.value["preguntas"] != null ? snapshot.value["preguntas"].cast<String>() : null;
 
   toJson() {
     return {

@@ -1,4 +1,5 @@
 import 'package:firebase_database/firebase_database.dart';
+import 'package:test_examen/model/usuarios_pregunta.dart';
 
 class Pregunta {
   String key;
@@ -6,10 +7,10 @@ class Pregunta {
   List<String> respuestas;
   int respuestaCorrecta;
   String explicacion;
-  //List<String> usuarios;
+  List<String> usuariosPregunta;
 
   Pregunta(
-      this.texto, this.respuestas, this.respuestaCorrecta, this.explicacion, /*this.usuarios*/);
+      this.texto, this.respuestas, this.respuestaCorrecta, this.explicacion, this.usuariosPregunta);
 
   Pregunta.fromSnapshot(DataSnapshot snapshot)
       : key = snapshot.key,
@@ -23,17 +24,18 @@ class Pregunta {
             : null,
         explicacion = snapshot.value["explicacion"] != null
             ? snapshot.value["explicacion"]
-            : null
-        /*usuarios = snapshot.value["usuarios"] != null
-            ? snapshot.value["usuarios"].cast<String>()
-            : null*/;
+            : null,
+        usuariosPregunta = snapshot.value["usuariosPregunta"] != null
+            ? snapshot.value["usuariosPregunta"].cast<String>()
+            : null;
 
   toJson() {
     return {
       "texto": texto,
       "respuestas": respuestas,
       "respuestaCorrecta": respuestaCorrecta,
-      "explicacion": explicacion
+      "explicacion": explicacion,
+      "usuariosPregunta": usuariosPregunta
     };
   }
 
@@ -45,9 +47,9 @@ class Pregunta {
         : null;
     this.respuestaCorrecta = json["respuestaCorrecta"];
     this.explicacion = json["explicacion"];
-    /*this.usuarios = json.containsKey('usuarios')
-        ? json['usuarios'].cast<String>()
-        : null;*/
+    this.usuariosPregunta = json.containsKey('usuariosPregunta')
+        ? json['usuariosPregunta']
+        : null;
   }
 
 }

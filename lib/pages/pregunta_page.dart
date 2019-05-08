@@ -32,7 +32,10 @@ class _PreguntaPageState extends State<PreguntaPage> {
     return new Scaffold(
       appBar: AppBar(title: Text('Pregunta')),
       body: _buildBody(context),
-      drawer: MyDrawer(),
+      drawer:  new MyDrawer(
+          auth: widget.auth,
+          userId: widget.userId,
+          onSignedOut: widget.onSignedOut),
     );
   }
 

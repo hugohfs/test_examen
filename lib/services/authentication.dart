@@ -65,7 +65,7 @@ class Auth implements BaseAuth {
     print('signInWithGoogle succeeded: $user');
 
     g.userInfoDetails =  new UserInfoDetails(
-        user.providerId, user.displayName, user.email, user.photoUrl, user.uid);
+        user.providerId, user.displayName != null ? user.displayName : user.email, user.email, user.photoUrl != null ? user.photoUrl : g.URL_LOGO_POR_DEFECTO, user.uid);
 
     return user.uid;
   }
@@ -73,6 +73,10 @@ class Auth implements BaseAuth {
   Future<String> signIn(String email, String password) async {
     FirebaseUser user = await _firebaseAuth.signInWithEmailAndPassword(
         email: email, password: password);
+
+    g.userInfoDetails =  new UserInfoDetails(
+        user.providerId, user.displayName != null ? user.displayName : user.email, user.email, user.photoUrl != null ? user.photoUrl : g.URL_LOGO_POR_DEFECTO, user.uid);
+
     return user.uid;
   }
 

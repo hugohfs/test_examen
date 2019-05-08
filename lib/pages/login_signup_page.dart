@@ -48,7 +48,6 @@ class _LoginSignUpPageState extends State<LoginSignUpPage> {
       try {
         if (_formMode == FormMode.LOGIN) {
           userId = await widget.auth.signIn(_email, _password);
-          //userId = await widget.auth.signInWithGoogle();
           print('Signed in: $userId');
         } else {
           userId = await widget.auth.signUp(_email, _password);
@@ -163,7 +162,7 @@ class _LoginSignUpPageState extends State<LoginSignUpPage> {
         return AlertDialog(
           title: new Text("Verify your account"),
           content:
-              new Text("Link to verify account has been sent to your email"),
+              new Text(g.ENLACE_VERIFICAR_CUENTA),
           actions: <Widget>[
             new FlatButton(
               child: new Text("Dismiss"),
@@ -304,22 +303,22 @@ class _LoginSignUpPageState extends State<LoginSignUpPage> {
   Widget _showGoogleButton() {
     return new Padding(
         padding: EdgeInsets.fromLTRB(0.0, 45.0, 0.0, 0.0),
-        child: SizedBox(
+        child: GoogleSignInButton(
+          text: g.INICIAR_SESION_GOOGLE,
+          darkMode: false, // default: false
+          borderRadius: 30.0,
+          onPressed: _loginWithGoogle,
+        )
+        /*SizedBox(
             height: 40.0,
-            child:
-                /*new RaisedButton(
+            child: new RaisedButton(
             elevation: 5.0,
             shape: new RoundedRectangleBorder(borderRadius: new BorderRadius.circular(30.0)),
             color: Colors.red,
             child: new Text('Login with Google',
                 style: new TextStyle(fontSize: 20.0, color: Colors.white)),
             onPressed: _loginWithGoogle,
-          ),*/
-                new GoogleSignInButton(
-              text: g.INICIAR_SESION_GOOGLE,
-              onPressed: _loginWithGoogle,
-              darkMode: false, // default: false
-              borderRadius: 30.0,
-            )));
+          ))*/
+    );
   }
 }

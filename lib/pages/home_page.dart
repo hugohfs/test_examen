@@ -127,7 +127,7 @@ class _HomePageState extends State<HomePage> {
     //_tabController = new TabController(length: 5, vsync: this);
 
     if (g.userInfoDetails != null) {
-      print('userInfoDetails.displayName:' + g.userInfoDetails.displayName);
+      print('userInfoDetails.email:' + g.userInfoDetails.email);
     } else {
       _checkEmailVerification();
 
@@ -242,12 +242,12 @@ class _HomePageState extends State<HomePage> {
     return Scaffold(
       appBar: AppBar(
         title: Text(g.APPBAR_MENU_PRINCIPAL),
-        actions: <Widget>[
+        /*actions: <Widget>[
           IconButton(
               //icon: Icon((Icons.power_settings_new)), onPressed: () => widget.auth.disconnect()),
               icon: Icon((Icons.power_settings_new)),
               onPressed: _signOut),
-        ],
+        ],*/
       ),
       drawer: new MyDrawer(
           auth: widget.auth,

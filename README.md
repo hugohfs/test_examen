@@ -13,3 +13,13 @@ Listar preguntas.
 Eliminar pregunta del listado. (Botón comentado)
 
 Responder pregunta del listado.
+
+## Pendiente
+
+Mostrar los temas(preguntas) disponibles.
+Saber a los temas que estas subscrito y los que no.
+Añadir opción para subscribirse a temas.
+Historial de respuestas.
+
+
+

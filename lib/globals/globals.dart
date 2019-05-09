@@ -26,6 +26,7 @@ final String INICIAR_SESION_GOOGLE = 'Iniciar sesión con Google';
 final String APPBAR_MENU_PRINCIPAL = 'Test de examen';
 final String DRAWER_INICIO = 'Inicio';
 final String DRAWER_ANADIR_PREGUNTAS = 'Añadir preguntas';
+final String DRAWER_LISTA_DE_TEMAS = 'Lista de temas';
 final String DRAWER_LISTA_DE_PREGUNTAS = 'Lista de preguntas';
 final String DRAWER_CERRAR = 'Cerrar';
 final String DRAWER_CERRAR_SESISON = 'Cerrar sesión';
@@ -41,3 +42,6 @@ final String APPBAR_ANADIR_PREGUNTAS = 'Añadir preguntas';
 /*pregunta_page.dart*/
 final String RESPUESTA_CORRECTA = 'Respuesta correcta.';
 final String RESPUESTA_INCORRECTA = 'Respuesta incorrecta.';
+
+/*lista_preguntas_page.dart*/
+final String APPBAR_LISTA_DE_TEMAS = 'Lista de temas';

@@ -8,27 +8,6 @@ import 'package:test_examen/pages/login_signup_page.dart';
 import 'package:test_examen/pages/root_page.dart';
 import 'package:test_examen/services/authentication.dart';
 
-/*class UserDetails {
-  final String providerId;
-
-  final String uid;
-
-  final String displayName;
-
-  final String photoUrl;
-
-  final String email;
-
-  final bool isAnonymous;
-
-  final bool isEmailVerified;
-
-  final List<UserInfoDetails> providerData;
-
-  UserDetails(this.providerId, this.uid, this.displayName, this.photoUrl,
-      this.email, this.isAnonymous, this.isEmailVerified, this.providerData);
-}
-*/
 
 class HomePage extends StatefulWidget {
   HomePage({Key key, this.auth, this.userId, this.onSignedOut})
@@ -43,82 +22,6 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  GoogleSignIn _googleAuth = new GoogleSignIn();
-
-  /*final FirebaseAuth _fAuth = FirebaseAuth.instance;
-  final GoogleSignIn _gSignIn = new GoogleSignIn();
-
-  Future<FirebaseUser> _signIn(BuildContext context) async {
-    Scaffold.of(context).showSnackBar(new SnackBar(
-      content: new Text('Sign in button clicked'),
-    ));
-
-    GoogleSignInAccount googleSignInAccount = await _gSignIn.signIn();
-    GoogleSignInAuthentication authentication =
-    await googleSignInAccount.authentication;
-
-    FirebaseUser user = await _fAuth.signInWithGoogle(
-        idToken: authentication.idToken,
-        accessToken: authentication.accessToken);
-
-    UserInfoDetails userInfo = new UserInfoDetails(
-        user.providerId, user.displayName, user.email, user.photoUrl, user.uid);
-
-    List<UserInfoDetails> providerData = new List<UserInfoDetails>();
-    providerData.add(userInfo);
-
-    UserDetails details = new UserDetails(
-        user.providerId,
-        user.uid,
-        user.displayName,
-        user.photoUrl,
-        user.email,
-        user.isAnonymous,
-        user.isEmailVerified,
-        providerData);
-
-    print("User Name : ${user.displayName}");
-    Navigator.push(
-      context,
-      new MaterialPageRoute(
-        builder: (context) => new DetailScreen(detailsUser: details),
-      ),
-    );
-    return user;
-  }
-
-  void _signOut(BuildContext context) {
-    Scaffold.of(context).showSnackBar(new SnackBar(
-      content: new Text('Sign out button clicked'),
-    ));
-
-    _gSignIn.signOut();
-    print('Signed out');
-  }*/
-
-  /*GoogleSignIn _googleSignIn = new GoogleSignIn(
-    scopes: [
-      'email',
-      'https://www.googleapis.com/auth/contacts.readonly',
-    ],
-  );
-
-  initLogin() {
-    _googleSignIn.onCurrentUserChanged
-        .listen((GoogleSignInAccount account) async {
-      if (account != null) {
-        // user logged
-      } else {
-        // user NOT logged
-      }
-    });
-    _googleSignIn.signInSilently().whenComplete(() => dismissLoading());
-  }
-
-  doLogin() async {
-    showLoading();
-    await _googleSignIn.signIn();
-  }*/
 
   @override
   void initState() {

@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:test_examen/pages/anadir_pregunta_page.dart';
 import 'package:test_examen/pages/home_page.dart';
 import 'package:test_examen/pages/lista_preguntas_page.dart';
+import 'package:test_examen/pages/lista_temarios_page.dart';
 import 'package:test_examen/pages/root_page.dart';
 import 'package:test_examen/services/authentication.dart';
 
@@ -57,6 +58,14 @@ class MyDrawer extends Drawer {
                     builder: (BuildContext context) => AnadirPreguntaPage()));
               }),*/
           ListTile(
+              title: Text(g.DRAWER_LISTA_DE_TEMAS),
+              trailing: Icon(Icons.collections_bookmark),
+              onTap: () {
+                Navigator.of(context).pop();
+                Navigator.of(context).push(MaterialPageRoute(
+                    builder: (BuildContext context) => ListaTemariosPage(auth: auth, userId: userId, onSignedOut: onSignedOut)));
+              }),
+          ListTile(
               title: Text(g.DRAWER_LISTA_DE_PREGUNTAS),
               trailing: Icon(Icons.playlist_add_check),
               onTap: () {
@@ -77,10 +86,11 @@ class MyDrawer extends Drawer {
               Navigator.of(context).pop();
               auth.signOut();
               auth.signOutGoogle();
-              Navigator.push(
+              Navigator.pushNamed(context, "/RootPage");
+              /*Navigator.push(
                   context,
                   MaterialPageRoute(
-                      builder: (context) => new RootPage(auth: new Auth())));
+                      builder: (context) => new RootPage(auth: new Auth())));*/
 
               /*Navigator.of(context).push(MaterialPageRoute(
                   builder: (BuildContext context) => new RootPage(auth: new Auth())));*/

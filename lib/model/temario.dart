@@ -4,24 +4,27 @@ class Tema {
   String key;
   String nombre;
   List<String> preguntas;
+  List<String> usuarios;
 
   //Rol rol;
 
-  Tema(this.nombre, this.preguntas);
+  Tema(this.nombre, this.preguntas, this.usuarios);
 
   Tema.fromSnapshot(DataSnapshot snapshot)
       : key = snapshot.key,
         nombre =
         snapshot.value["nombre"] != null ? snapshot.value["nombre"] : null,
-        /*preguntas =
-        snapshot.value["preguntas"] != null ? snapshot.value["preguntas"] : null,*/
         preguntas =
-        snapshot.value["preguntas"] != null ? snapshot.value["preguntas"].cast<String>() : null;
+        snapshot.value["preguntas"] != null ? snapshot.value["preguntas"].cast<String>() : null,
+        usuarios =
+        snapshot.value["usuarios"] != null ? List.from(snapshot.value["usuarios"].cast<String>()) : null;
+        //snapshot.value["usuarios"] != null ? snapshot.value["usuarios"].cast<String>() : null;
 
   toJson() {
     return {
       "nombre": nombre,
-      "preguntas": preguntas
+      "preguntas": preguntas,
+      "usuarios": usuarios
     };
   }
 
@@ -32,6 +35,15 @@ class Tema {
     this.preguntas = json.containsKey('preguntas') == true
         ? json['preguntas'].cast<String>()
         : null;
+    this.usuarios = json.containsKey('usuarios') == true
+        ? json['usuarios'].cast<String>()
+        : null;
   }
+
+  @override
+  String toString() {
+    return 'Tema{key: $key, nombre: $nombre, preguntas: $preguntas, usuarios: $usuarios}';
+  }
+
 
 }

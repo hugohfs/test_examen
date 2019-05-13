@@ -52,5 +52,11 @@ class Pregunta {
         : null;
   }
 
+  @override
+  String toString() {
+    return 'Pregunta{key: $key, texto: $texto, respuestas: $respuestas, respuestaCorrecta: $respuestaCorrecta, explicacion: $explicacion, usuariosPregunta: $usuariosPregunta}';
+  }
+
+
 }
 

@@ -26,8 +26,7 @@ class _ListaTemariosPageState extends State<ListaTemariosPage> {
   List<Pregunta> _preguntas = List();
   List<Pregunta> _preguntasUsuario = List();
   List<Pregunta> _preguntasGratis = List();
-  List<Tema> _temarios = List();
-  Usuario _usuario = Usuario('','',[]);
+  List<Tema> _temas = List();
 
   final FirebaseDatabase _database = FirebaseDatabase.instance;
   StreamSubscription<Event> _onPreguntaAddedSubscription;
@@ -55,22 +54,15 @@ class _ListaTemariosPageState extends State<ListaTemariosPage> {
     _preguntas = List();
     _preguntasUsuario = List();
     _preguntasGratis = List();
-    _temarios = List();
+    _temas = List();
 
-    _preguntasQuery = _database
-        .reference()
-        .child("testExamen/preguntas")
-        ;
+    _preguntasQuery = _database.reference().child("testExamen/preguntas");
 
     _usuarioQuery = _database
         .reference()
-        .child("testExamen/usuarios/" + g.userInfoDetails.uid)
-    ;
+        .child("testExamen/usuarios/" + g.userInfoDetails.uid);
 
-    _temarioQuery = _database
-        .reference()
-        .child("testExamen/temario")
-    ;
+    _temarioQuery = _database.reference().child("testExamen/temario");
 
     _onPreguntaAddedSubscription =
         _preguntasQuery.onChildAdded.listen(_onPreguntaEntryAdded);
@@ -82,10 +74,8 @@ class _ListaTemariosPageState extends State<ListaTemariosPage> {
     _onTemarioChangedSubscription =
         _temarioQuery.onChildChanged.listen(_onTemarioEntryChanged);
 
-    _preguntasGratisQuery = _database
-        .reference()
-        .child("testExamen/preguntasGratis")
-        ;
+    _preguntasGratisQuery =
+        _database.reference().child("testExamen/preguntasGratis");
 
     _preguntasGratisQuery.onChildAdded.listen((Event event) {
       setState(() {
@@ -94,7 +84,6 @@ class _ListaTemariosPageState extends State<ListaTemariosPage> {
         _preguntasUsuario.add(p);
       });
     });
-
   }
 
   @override
@@ -112,7 +101,7 @@ class _ListaTemariosPageState extends State<ListaTemariosPage> {
     setState(() {
       Pregunta p = Pregunta.fromSnapshot(event.snapshot);
       _preguntas.add(p);
-      if(p.usuariosPregunta.contains(g.userInfoDetails.uid)) {
+      if (p.usuariosPregunta.contains(g.userInfoDetails.uid)) {
         _preguntasUsuario.add(p);
       }
     });
@@ -131,18 +120,17 @@ class _ListaTemariosPageState extends State<ListaTemariosPage> {
 
   _onTemarioEntryAdded(Event event) {
     setState(() {
-      _temarios.add(Tema.fromSnapshot(event.snapshot));
+      _temas.add(Tema.fromSnapshot(event.snapshot));
     });
   }
 
   _onTemarioEntryChanged(Event event) {
-    var old = _temarios.singleWhere((entry) {
+    var old = _temas.singleWhere((entry) {
       return entry.key == event.snapshot.key;
     });
 
     setState(() {
-      _temarios[_temarios.indexOf(old)] =
-          Tema.fromSnapshot(event.snapshot);
+      _temas[_temas.indexOf(old)] = Tema.fromSnapshot(event.snapshot);
     });
   }
 
@@ -158,14 +146,28 @@ class _ListaTemariosPageState extends State<ListaTemariosPage> {
     });
   }*/
 
+  _actualizaTema(Tema tema) {
+    if (_estaSubscrito(tema)) {
+      tema.usuarios.removeWhere((user) => user == g.userInfoDetails.uid);
+      _database.reference().child("testExamen/temario").child(tema.key).set(tema.toJson());
+    } else {
+      tema.usuarios.add(g.userInfoDetails.uid);
+      _database.reference().child("testExamen/temario").child(tema.key).set(tema.toJson());
+    }
+  }
+
+  bool _estaSubscrito(Tema tema) {
+    return tema.usuarios.contains(g.userInfoDetails.uid);
+  }
+
   Widget _buildBody(BuildContext context) {
     return ListView.builder(
         shrinkWrap: true,
-        itemCount: _temarios.length,
+        itemCount: _temas.length,
         itemBuilder: (BuildContext context, int index) {
           return ListTile(
             title: Text(
-              _temarios[index].nombre ?? '',
+              _temas[index].nombre ?? '',
               style: TextStyle(fontSize: 20.0),
             ),
             /*subtitle: _temarios[index].respuestas != null
@@ -183,11 +185,17 @@ class _ListaTemariosPageState extends State<ListaTemariosPage> {
                         auth: widget.auth,
                         userId: widget.userId,
                         onSignedOut: widget.onSignedOut))),*/
-            /*trailing: IconButton(
-                icon: Icon(Icons.delete, color: Colors.grey, size: 20.0),
+            trailing: IconButton(
+                icon: (_estaSubscrito(_temas[index]))
+                    ? Icon(
+                        Icons.remove_circle_outline,
+                        color: Colors.red,
+                        size: 20.0,
+                      )
+                    : Icon(Icons.add_circle_outline, color: Colors.blue, size: 20.0),
                 onPressed: () {
-                  eliminarPregunta(index);
-                }),*/
+                  _actualizaTema(_temas[index]);
+                }),
           );
         });
   }

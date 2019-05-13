@@ -18,8 +18,23 @@ class MyDrawer extends Drawer {
   final VoidCallback onSignedOut;
   final String userId;
 
+
+
   @override
   Widget build(BuildContext context) {
+
+    /*_signOut() async {
+      Navigator.of(context).pop();
+      try {
+        await auth.signOutGoogle();
+        await auth.signOut();
+        onSignedOut();
+        Navigator.of(context).pop();
+      } catch (e) {
+        print(e);
+      }
+    }*/
+
     return Drawer(
       child: ListView(
         children: <Widget>[
@@ -79,14 +94,15 @@ class MyDrawer extends Drawer {
             trailing: Icon(Icons.close),
             onTap: () => Navigator.of(context).pop(),
           ),*/
-          ListTile(
+          /*ListTile(
             title: Text(g.DRAWER_CERRAR_SESISON),
             trailing: Icon(Icons.exit_to_app),
-            onTap: () {
-              Navigator.of(context).pop();
+            onTap: _signOut //() {
+              /*Navigator.of(context).pop();
               auth.signOut();
               auth.signOutGoogle();
-              Navigator.pushNamed(context, "/RootPage");
+              */
+              //Navigator.pushNamed(context, "/RootPage");
               /*Navigator.push(
                   context,
                   MaterialPageRoute(
@@ -94,8 +110,9 @@ class MyDrawer extends Drawer {
 
               /*Navigator.of(context).push(MaterialPageRoute(
                   builder: (BuildContext context) => new RootPage(auth: new Auth())));*/
-              },
-          ),
+              //}
+            ,
+          ),*/
           ListTile(
             title: Text(g.DRAWER_SALIR),
             trailing: Icon(Icons.close),

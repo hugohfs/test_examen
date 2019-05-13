@@ -113,18 +113,15 @@ class _HomePageState extends State<HomePage> {
   }
 
   _signOut() async {
-    //Navigator.of(context).pop();
     try {
-      //await widget.auth.signOut();
-      await widget.auth.signOut();
       await widget.auth.signOutGoogle();
-      //await widget.auth.disconnect();
+      await widget.auth.signOut();
       widget.onSignedOut();
-
-      return new RootPage(auth: new Auth());
-    } catch (e) {
+      } catch (e) {
       print(e);
     }
+    Navigator.push(context, MaterialPageRoute(
+        builder: (BuildContext context) => RootPage(auth: new Auth())));
   }
 
   Widget _showLogo() {
@@ -145,12 +142,12 @@ class _HomePageState extends State<HomePage> {
     return Scaffold(
       appBar: AppBar(
         title: Text(g.APPBAR_MENU_PRINCIPAL),
-        /*actions: <Widget>[
+        actions: <Widget>[
           IconButton(
               //icon: Icon((Icons.power_settings_new)), onPressed: () => widget.auth.disconnect()),
-              icon: Icon((Icons.power_settings_new)),
+              icon: Icon((Icons.exit_to_app)),
               onPressed: _signOut),
-        ],*/
+        ],
       ),
       drawer: new MyDrawer(
           auth: widget.auth,

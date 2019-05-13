@@ -26,124 +26,64 @@ class _ListaPreguntasPageState extends State<ListaPreguntasPage> {
   List<Pregunta> _preguntas = List();
   List<Pregunta> _preguntasUsuario = List();
   List<Pregunta> _preguntasGratis = List();
-  List<Tema> _temario = List();
-  Usuario _usuario = Usuario('','',[]);
+  List<Tema> _temas = List();
 
   final FirebaseDatabase _database = FirebaseDatabase.instance;
   StreamSubscription<Event> _onPreguntaAddedSubscription;
   StreamSubscription<Event> _onPreguntaChangedSubscription;
-  StreamSubscription<Event> _onTemarioAddedSubscription;
-  StreamSubscription<Event> _onTemarioChangedSubscription;
-  StreamSubscription<Event> _onUsuarioAddedSubscription;
-  StreamSubscription<Event> _onUsuarioChangedSubscription;
+  StreamSubscription<Event> _onPreguntaGratisAddedSubscription;
+  StreamSubscription<Event> _onPreguntaGratisChangedSubscription;
+  StreamSubscription<Event> _onTemaAddedSubscription;
+  StreamSubscription<Event> _onTemaChangedSubscription;
+
   Query _preguntasQuery;
   Query _preguntasGratisQuery;
-  Query _usuarioQuery;
   Query _temarioQuery;
+
 
   @override
   void initState() {
     super.initState();
 
-    /*_database.reference().child("testExamen/usuarios/" + g.userInfoDetails.uid).once().then((DataSnapshot snapshot) {
-      print('usuario: ${snapshot.value}');
-      setState(() {
-        _usuario = Usuario.fromSnapshot(snapshot);
-      });
-    });*/
-
     _preguntas = List();
     _preguntasUsuario = List();
     _preguntasGratis = List();
-    _temario = List();
+    _temas = List();
 
     _preguntasQuery = _database
         .reference()
-        .child("testExamen/preguntas")
-        ;
-
-    _usuarioQuery = _database
-        .reference()
-        .child("testExamen/usuarios/" + g.userInfoDetails.uid)
-    ;
-
-    _temarioQuery = _database
-        .reference()
-        .child("testExamen/temario")
-    ;
-
-    _onPreguntaAddedSubscription =
-        _preguntasQuery.onChildAdded.listen(_onPreguntaEntryAdded);
-    _onPreguntaChangedSubscription =
-        _preguntasQuery.onChildChanged.listen(_onPreguntaEntryChanged);
-
-    _onTemarioAddedSubscription =
-        _temarioQuery.onChildAdded.listen(_onTemarioEntryAdded);
-    _onTemarioChangedSubscription =
-        _temarioQuery.onChildChanged.listen(_onTemarioEntryChanged);
-
-    /*_database.reference().child('testExamen/temario').once().then((DataSnapshot snapshot) {
-      print('temario: ${snapshot.value}');
-    });*/
-
-    /*_database.reference().child('testExamen/preguntas').once().then((DataSnapshot snapshot) {
-      print('preguntas: ${snapshot.value}');
-    });*/
-
+        .child("testExamen/preguntas");
 
     _preguntasGratisQuery = _database
         .reference()
-        .child("testExamen/preguntasGratis")
-        ;
+        .child("testExamen/preguntasGratis");
 
-    _preguntasGratisQuery.onChildAdded.listen((Event event) {
-      setState(() {
-        Pregunta p = Pregunta.fromSnapshot(event.snapshot);
-        _preguntasGratis.add(p);
-        _preguntasUsuario.add(p);
-      });
-    });
+    _temarioQuery= _database
+        .reference()
+        .child("testExamen/temario");
 
-    _database.reference().child('testExamen/preguntasGratis').once().then((DataSnapshot snapshot) {
-      //print('preguntasGratis: ${snapshot.value}');
+    /*_onPreguntaAddedSubscription =
+        _preguntasQuery.onChildAdded.listen(_onPreguntaEntryAdded);
+    _onPreguntaChangedSubscription =
+        _preguntasQuery.onChildChanged.listen(_onPreguntaEntryChanged);*/
 
-      /*DataSnapshot dataSnapshot = snapshot.value;
-      setState(() {
-        Pregunta p = new Pregunta.fromSnapshot(dataSnapshot);
-        _preguntas.add(p);
-      });*/
+    _onPreguntaGratisAddedSubscription =
+        _preguntasGratisQuery.onChildAdded.listen(_onPreguntaGratisEntryAdded);
+    _onPreguntaGratisChangedSubscription =
+        _preguntasGratisQuery.onChildChanged.listen(_onPreguntaGratisEntryChanged);
 
-      /*Map<dynamic,dynamic> map = snapshot.value;
+    _onTemaAddedSubscription =
+        _temarioQuery.onChildAdded.listen(_onTemaEntryAdded);
+    _onTemaChangedSubscription =
+        _temarioQuery.onChildChanged.listen(_onTemaEntryChanged);
+
+    /*_database.reference().child("testExamen/temario").once().then((DataSnapshot snapshot) {
+      Map<dynamic,dynamic> map = snapshot.value;
       map.forEach((key, value) {
         print('$key: $value');
 
-        DataSnapshot snapshotValue = value;
-        Map<dynamic,dynamic> mapValue = snapshotValue.value;
-        mapValue.forEach((key, value) {
-          print('$key: $value');
-        });
-
-
-        setState(() {
-          List<String> keys = [key];
-          List<dynamic> values = [value];
-          Map<dynamic,dynamic> m = new Map.fromIterables(keys, values);
-          print('AAAAAAAAAAAAAAAAAAAA');
-          print(m);
-          Pregunta p2 = new Pregunta.fromJson(m);
-          print(p2.key);
-          Pregunta p = new Pregunta('texto', ['respuestas1', 'respuestas2','respuestas3'], 0, 'explicacion');
-          p.key = key;
-          _preguntas.add(p);
-        });
-
-        _preguntas.forEach((p) {
-          print(p.key + ' - ' +p.texto);
-        });
-
-      });*/
-
-    });
+      });
+    });*/
 
   }
 
@@ -151,10 +91,8 @@ class _ListaPreguntasPageState extends State<ListaPreguntasPage> {
   void dispose() {
     _onPreguntaAddedSubscription.cancel();
     _onPreguntaChangedSubscription.cancel();
-    _onTemarioAddedSubscription.cancel();
-    _onTemarioChangedSubscription.cancel();
-    _onUsuarioAddedSubscription.cancel();
-    _onUsuarioChangedSubscription.cancel();
+    _onPreguntaGratisAddedSubscription.cancel();
+    _onPreguntaGratisChangedSubscription.cancel();
     super.dispose();
   }
 
@@ -173,40 +111,64 @@ class _ListaPreguntasPageState extends State<ListaPreguntasPage> {
       return entry.key == event.snapshot.key;
     });
 
+    Pregunta p = Pregunta.fromSnapshot(event.snapshot);
     setState(() {
-      _preguntas[_preguntas.indexOf(old)] =
-          Pregunta.fromSnapshot(event.snapshot);
+      _preguntas[_preguntas.indexOf(old)] = p;
     });
   }
 
-  _onTemarioEntryAdded(Event event) {
+  _onPreguntaGratisEntryAdded(Event event) {
     setState(() {
-      _temario.add(Tema.fromSnapshot(event.snapshot));
+      Pregunta p = Pregunta.fromSnapshot(event.snapshot);
+      _preguntasGratis.add(p);
+      _preguntasUsuario.add(p);
     });
   }
 
-  _onTemarioEntryChanged(Event event) {
-    var old = _temario.singleWhere((entry) {
+  _onPreguntaGratisEntryChanged(Event event) {
+    var old = _preguntasGratis.singleWhere((entry) {
+      return entry.key == event.snapshot.key;
+    });
+
+    Pregunta p = Pregunta.fromSnapshot(event.snapshot);
+    setState(() {
+      _preguntasGratis[_preguntasGratis.indexOf(old)] = p;
+    });
+  }
+
+  _onTemaEntryAdded(Event event) {
+    Tema t = Tema.fromSnapshot(event.snapshot);
+    setState(() {
+      _temas.add(t);
+    });
+
+    for (String usuario in t.usuarios) {
+      if(usuario == g.userInfoDetails.uid) {
+        for (String pregunta in t.preguntas) {
+          _database.reference().child("testExamen/preguntas/" + pregunta).once().then((DataSnapshot snapshot) {
+            Pregunta p = Pregunta.fromSnapshot(snapshot);
+            if(!_preguntasUsuario.contains(p)) {
+              setState(() {
+                _preguntasUsuario.add(p);
+              });
+            }
+          });
+        }
+        break;
+      }
+    }
+
+  }
+
+  _onTemaEntryChanged(Event event) {
+    var old = _temas.singleWhere((entry) {
       return entry.key == event.snapshot.key;
     });
 
     setState(() {
-      _temario[_temario.indexOf(old)] =
-          Tema.fromSnapshot(event.snapshot);
+      _temas[_temas.indexOf(old)] = Tema.fromSnapshot(event.snapshot);
     });
   }
-
-  /*_onUsuarioEntryAdded(Event event) {
-    setState(() {
-      _usuario = Usuario.fromSnapshot(event.snapshot);
-    });
-  }
-
-  _onUsuarioEntryChanged(Event event) {
-    setState(() {
-      _usuario = Usuario.fromSnapshot(event.snapshot);
-    });
-  }*/
 
   Widget _buildBody(BuildContext context) {
     return ListView.builder(
@@ -219,11 +181,11 @@ class _ListaPreguntasPageState extends State<ListaPreguntasPage> {
               style: TextStyle(fontSize: 20.0),
             ),
             subtitle: _preguntasUsuario[index].respuestas != null
-                ? Text(_preguntasUsuario[index].respuestas[0] ?? '' +
+                ? Text(_preguntasUsuario[index].respuestas[0] +
                     ", " +
-                  _preguntasUsuario[index].respuestas[1] ?? '' +
+                  _preguntasUsuario[index].respuestas[1] +
                     ", " +
-                  _preguntasUsuario[index].respuestas[2] ?? '')
+                  _preguntasUsuario[index].respuestas[2] )
                 : Text(''),
             onTap: () => Navigator.push(
                 context,
